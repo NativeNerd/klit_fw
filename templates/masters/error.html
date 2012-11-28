@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="de" lang="de">
+    <head>
+        <meta http-equiv="content-language" content="de" />
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Fehlermeldung</title>
+        <style type="text/css">
+            /**
+            * [small.css]
+            * @version 1.0.0
+            * @author Christian Klauenbösch
+            * @copyright Klauenbösch IT Sevices
+            * @link http://www.klit.ch
+            *
+            * previous now     what changed
+            *          1.0.0
+            */
+            body {
+                font: normal 73%/1.5em 'Trebuchet MS', Tahoma, sans-serif;
+                margin: 200px 0 0 0;
+                padding: 0;
+                background-color: #2a2a2a;
+            }
+            a {
+                background: inherit;
+                color: #72A545;
+                text-decoration: none;
+            }
+            a:hover {
+                background: inherit;
+                color: #006699;
+                text-decoration: underline;
+            }
+            h1 {
+                font: bold 1.4em 'Trebuchet MS', Tahoma, Sans-serif;
+                color: #65944A;
+                border-bottom: 1px solid #555;
+            }
+            .left {
+                text-align: left;
+                float: left;
+            }
+            .right {
+                text-align: right;
+                float: right;
+            }
+            #container {
+                background-color: white;
+                position: absolute;
+                width: 500px;
+                height: auto;
+                border: 2px solid #65944A;
+                left: 50%;
+                margin-left: -250px;
+                text-align: left;
+                padding: 20px;
+                border-radius: 20px;
+                -moz-border-radius: 20px;
+            }
+            #footer {
+                width: 100%;
+                border-top: 1px solid #555;
+                clear: both;
+                margin: 10px 0 0 0;
+                padding: 0;
+                font: normal .95em/1.6em 'Trebuchet MS', Tahoma, Arial, sans-serif;
+            }
+            input {
+                width: 180px;
+                margin-right: 10px;
+                margin-bottom: 5px;
+                padding: 2px;
+                text-align: center;
+                border: 1px solid #bbb;
+                font: normal 1em "Trebuchet MS", Tahoma, sans-serif;
+                color: #777;
+            }
+            input[type=checkbox] {
+                width: 10px;
+                margin-left: 10px !important;
+                text-align: center;
+            }
+            input[type=submit] {
+                height: 26px;
+                width: 186px;
+                color: #212121;
+            }
+            .state-error {
+                border: 1px solid #cd0a0a;
+                border-radius: 5px;
+                -moz-border-radius: 5px;
+                padding: 5px;
+                margin: 10px;
+                background: url('../images/input_bg_red.png') repeat;
+                color: #cd0a0a;
+            }
+            .state-success {
+                border: 1px solid green;
+                border-radius: 5px;
+                -moz-border-radius: 5px;
+                padding: 5px;
+                margin: 10px;
+                background: url('../images/input_bg_green.png') repeat;
+            }
+            #next {
+                text-align: center;
+                font-size: 200%;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="container">
+            <h1>Fehler</h1>
+            Es scheint ein Fehler aufgetreten zu sein. Unser Service ist im Moment deshalb nicht verf&uuml;gbar.<br />
+            <br />
+            Versuchen Sie, die Seite zu aktualisieren oder klicken Sie <a href="javascript:history.back()">hier</a> um auf die letzte Seite zur&uuml;ck
+            zu gelangen.<br />
+            <br />
+            Sollte der Fehler weiterhin bestehen, kontaktieren Sie bitte unseren Support.<br />
+            <br />
+            <b>Fehlermeldung:</b> {$errorvalue}
+            <div id="footer">
+                <span class="left">
+                    Helpline: +41 76 499 7952
+                </span>
+                <span class="right">
+                    &copy; 2012 Klauenbösch IT Services - <a href="http://www.klit.ch">www.klit.ch</a>
+                </span>
+            </div>
+        </div>
+    </body>
+</html>

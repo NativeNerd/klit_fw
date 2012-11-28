@@ -1,0 +1,100 @@
+Diese Datei ist eine kurze und knappe Dokumentation zur Funktion der Klasse "Template". Sie umschreibt die genau Syntax.
+
+/** Reihenfolge des Parsings
+    * Es wurde auf line-by-line-Parsing verzichtet
+    * Es wird in folgender Reihenfolge geparst
+
+1.  {ignore}-Tags
+2.  {declare}-Tags
+3.  {$}-Tags
+4.  Kontrollstruktur
+5.  Includes
+6.  Forms
+7.  Schleifen
+
+/** Variablen ( {$}-Tags )
+    * Es gibt drei Bereiche (scope) für Variablen
+    * 1. Assigned (zugewiesen)
+    * 2. Declared (deklariert)
+    * 3. Internal (intern)
+    * Variablen des 1. Bereichs sind über alle Templates verfügbar
+    * Variablen des 2. und 3. Bereichs sind nur im definierten Bereich verfügbar
+    * Die gezeigten Deklarationen können überall verwendet werden (Schleifen, if, include, ...)
+
+Variable gemäss assigned:
+    {$variable}
+
+Arrays gemäss assigned (unbegrenzt Stufen):
+    {$array:subarray:index}
+
+Variable gemäss declared:
+    {$:variable}
+
+Variable gemäss intern:
+    {$.variable}
+
+/** Für Variablendefinitionen
+    * Variablen können innerhalb eines Templates folgendermassen definiert werden
+    * Es findet keine Typenunterscheidung statt, alle Variablen sind vom Typ string
+    * Die definierten Variablen haben immer den Scope 2
+
+{declare ($variable) (Wert)}
+
+/** Für if-Konstrukte
+    * Zugelassen sind: definierte Funktionen gemäss Syntaxbeispiel 2
+    * Funktionen können negiert werden
+    * Vergleiche zweier Variablen mit den zugelassenen Vergleichsoperatoren
+    * Vergleichsoperatoren sind: ==, <=, >=, !=
+
+{if $value==$value}
+    Inhalt
+{/if}
+{if is_numeric($value)}
+    Inhalt
+{/if}
+{if !is_numeric($value)}
+    Inhalt
+{/if}
+
+/** Für foreach-Konstrukte
+    * Foreach sind da, um alle Elemente eines Arrays durchlaufen zu können
+    * Die Variablen {$.key} und {$.value} sind automatisch definiert
+
+{foreach ($array)}
+    {$.key} => {$.value}
+{/foreach}
+
+/** Für includes
+    * Includes werden in einem eigenen Bereich geparst
+    * Es besteht nur Zugriff auf Variablen des 1. Bereiches
+
+{include (a_template.tpl)}
+
+/** Gewissen Code ignorieren
+    * Code-Teile können ignoriert werden
+    * Alle { und } innerhalb dieses Bereichs werden durch die Sonderzeichenschreibweise (&#...;) ersetzt
+
+{ignore}
+    Ignorierter Code
+{/ignore}
+
+/** Für Form-Elemente (Klasse Form muss im Bootstrap sein!)
+    * Form-Elemente können über die ElementId angesprochen werden
+    * Ohne angegebene FormId wird die aktuelle FormId gewählt
+    * Kopf und Fuss können mit ":header" und ":footer" angewählt werden
+    * Kein Element darf als erstes Zeichen einen Doppelpunkt (":") besitzen
+    * Labels können similiar angesprochen werden
+
+Für ein Element:
+    {form (formId) (elementId)}
+    {form (elementId)}
+
+Für den Kopf:
+    {form (:header)}
+
+Für den Fuss:
+    {form (:footer)}
+
+Für ein Label:
+    {label (formId) (elementId)}
+    {label (elementId)}
