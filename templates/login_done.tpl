@@ -1,6 +1,0 @@
---
-
-Login done
-{$test3}
-
---
