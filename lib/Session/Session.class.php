@@ -13,6 +13,7 @@
      *              1.0.0   -
      *
      */
+    namespace Lib;
     class Session {
         private $Bootstrap;
         private $Id;
@@ -22,7 +23,7 @@
          * Initializes a Session
          * @param Model $Model
          */
-        public function __construct(Bootstrap $Bootstrap) {
+        public function __construct(\Core\Bootstrap $Bootstrap) {
             session_start();
             $this->Id = session_id();
             $this->Bootstrap = $Bootstrap;

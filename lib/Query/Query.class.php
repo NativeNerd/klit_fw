@@ -4,10 +4,11 @@
      *
      * @todo Statement-Array noch intensiver strukturieren
      * @todo $allowedAfterwards kontrollieren
+     * @todo Diverse Erweiterungen integrieren
      */
 
     /**
-     * [Model.class.php]
+     * [Query.class.php]
      * @version 2.0.0
      * @author Christian Klauenbösch
      * @copyright Klauenbösch IT Services
@@ -30,7 +31,8 @@
      *  - Der Benutzer bekommt ein Result das er mit $Model->getResult() abrufen kann
      *      - Der Benutzer kann direkt mit $Model->getResult()->fetch_assoc() die Daten verarbeiten
      */
-    class Model {
+    namespace Lib;
+    class Query {
         /**
          * Containts Database-Object
          * @var object
@@ -144,7 +146,7 @@
         private $tmp_where;
 
         /**
-         * Initializes the Model class
+         * Initializes the Query class
          *
          * @param string $host
          * @param string $user
@@ -153,7 +155,7 @@
          * @return (null)
          * @throws Mexception
          */
-        public function __construct(Bootstrap $Bootstrap) {
+        public function __construct(\Core\Bootstrap $Bootstrap) {
             $this->sql = $Bootstrap->getApplication('Database');
             return ;
         }
@@ -202,33 +204,33 @@
          */
         public function _ensureByType($value, $type) {
             try {
-            $matches = array();
-            if (!preg_match('$([a-zA-Z]+)\(([0-9]+)\)$', $type, $matches)) {
-                if (!preg_match('$([a-zA-Z]+)$', $type, $matches)) {
-                    return null;
+                $matches = array();
+                if (!preg_match('$([a-zA-Z]+)\(([0-9]+)\)$', $type, $matches)) {
+                    if (!preg_match('$([a-zA-Z]+)$', $type, $matches)) {
+                        return null;
+                    }
                 }
-            }
-            switch (strtolower($matches[1])) {
-                case 'varchar' :
-                    return $this->_ensureString($value);
-                    break;
-                case 'int' :
-                    return $this->_ensureInt($value);
-                    break;
-                case 'float' :
-                    return $this->_ensureFloat($value);
-                    break;
-                case 'bool' :
-                    return $this->_ensureBool($value);
-                    break;
-                case 'decimal' :
-                    return $this->_ensureDecimal($value);
-                    break;
-                case 'datetime' :
-                    return $this->_ensureDatetime($value);
-                default :
-                    throw new Mexception('Unknown field type');
-            }
+                switch (strtolower($matches[1])) {
+                    case 'varchar' :
+                        return $this->_ensureString($value);
+                        break;
+                    case 'int' :
+                        return $this->_ensureInt($value);
+                        break;
+                    case 'float' :
+                        return $this->_ensureFloat($value);
+                        break;
+                    case 'bool' :
+                        return $this->_ensureBool($value);
+                        break;
+                    case 'decimal' :
+                        return $this->_ensureDecimal($value);
+                        break;
+                    case 'datetime' :
+                        return $this->_ensureDatetime($value);
+                    default :
+                        throw new Mexception('Unknown field type');
+                }
             } catch (Mexception $e) {
                 $e->quit($e->getMessage());
             }

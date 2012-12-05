@@ -12,6 +12,7 @@
      *
      *
      */
+    namespace Lib;
     final class Crypto {
         protected $keyDir = 'keys';
         protected $cipher;

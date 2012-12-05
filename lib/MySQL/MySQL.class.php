@@ -1,6 +1,6 @@
 <?php
     /**
-     * [Database.class.php]
+     * [MySQL.class.php]
      * @version 3.0.1
      * @author Christian Klauenbösch
      * @copyright Klauenbösch IT Services
@@ -20,7 +20,8 @@
      *
      * release candidate
      */
-    class Database extends mysqli {
+    namespace Lib;
+    class MySQL extends \mysqli {
         private $query_singleResult         = null;
         private $results                    = array();
 

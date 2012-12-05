@@ -21,10 +21,11 @@
      *  $:variable      declared    Only in the own file
      *
      */
+    namespace Lib;
     class Template {
         private $Bootstrap;
-        private $dir_templates_origin = './templates/';
-        private $dir_templates = './templates/';
+        private $dir_templates_origin = './media/tpl/';
+        private $dir_templates = './media/tpl/';
         private $tpl_main = '';
         private $tpl_vars = array('internal' => array(), 'assigned' => array(), 'declared' => array());
         private $tpl_contents = array();
@@ -33,7 +34,7 @@
 
         public $return_unsetValue = '(null)';
 
-        public function __construct(Bootstrap $Bootstrap, $dir_template) {
+        public function __construct(\Core\Bootstrap $Bootstrap, $dir_template) {
             if (($this->dir_templates = Helper::buildPath($dir_template)) !== false) {
                 $this->Bootstrap = $Bootstrap;
                 $this->dir_templates_origin = $dir_template;
@@ -45,7 +46,11 @@
 
         public function open($template) {
             if (file_exists($this->dir_templates.$template)) {
-                $this->tpl_main = $template;
+                $this->tpl_main = $this->dir_templates.$template;
+                return true;
+            } elseif(file_exists(Helper::buildPath($template))) {
+                $this->tpl_main = Helper::buildPath($template);
+                return true;
             } else {
                 throw new Mexception('Unknown template');
             }
@@ -138,7 +143,7 @@
              */
 
             // I'm lazy, make $this->tpl_contents[$this->tpl_main] a bit shorter please....
-            $this->tpl_contents[$this->tpl_main] = file_get_contents($this->dir_templates.$this->tpl_main);
+            $this->tpl_contents[$this->tpl_main] = file_get_contents($this->tpl_main);
             $main = &$this->tpl_contents[$this->tpl_main];
 
             // Search for ignore-Tags
@@ -259,7 +264,7 @@
                 $this->tpl_vars = $object->tpl_vars;
                 return $return;
             } else {
-                throw new Mexception('Unknown template');
+                throw new Mexception('Unknown include');
             }
         }
 

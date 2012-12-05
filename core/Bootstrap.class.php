@@ -12,7 +12,25 @@
      *              1.0.0   -
      *
     */
+    namespace Core;
     class Bootstrap {
+        private $registered;
+
+        /**
+         * Registers an application, if application will be called, instance will be opened automatically
+         *
+         * @param string $applicationName
+         * @param string $namespace
+         */
+        public function registerApplication($applicationName, $className, $namespace) {
+            if (class_exists($namespace.'\\'.$className, false)) {
+                $this->registered[$applicationName] = $namespace.'\\'.$className;
+                return true;
+            } else {
+                return false;
+            }
+        }
+
         /**
          * Opens a new application in the bootstrap
          * @param object $applicationObject

@@ -11,6 +11,7 @@
      * 1.0.0        1.1.0   buildPath() neu ohne $character, gibt nun Fehler bei inexistentem Pfad (als default)
      *
      */
+    namespace Lib;
     final class Helper {
         final static public function buildPath($pathInProjectDir, $path = null, $extension = null, $error = true) {
             if (substr($pathInProjectDir, 0, 2) == '..') {
@@ -42,6 +43,25 @@
 
         final static public function getIp() {
             return $_SERVER['REMOTE_ADDR'];
+        }
+
+        final static public function parseUri() {
+            if (strlen($_SERVER['QUERY_STRING']) > 0) {
+                $str = explode('&', $_SERVER['QUERY_STRING']);
+                $newKey = array();
+                $newValue = array();
+                foreach ($str AS $value) {
+                    if (substr($value, 0, 1) == '/') {
+                        $value = substr($value, 1);
+                    }
+                    $value = explode('=', $value);
+                    $newKey[] = $value[0];
+                    $newValue[] = $value[1];
+                }
+                return array_combine($newKey, $newValue);
+            } else {
+                return false;
+            }
         }
 
         final static public function db_notationByType($value, $type) {

@@ -25,6 +25,7 @@
      *      - Ob jedes Feld gesendet wurde
      *      - Ob jedes Feld korrekte eingaben enthält
      */
+    namespace Lib;
     class FormNew {
         private $Bootstrap;
         private $Template;
@@ -38,7 +39,7 @@
             );
         private $formId = null;
 
-        public function __construct(Bootstrap $Bootstrap) {
+        public function __construct(\Core\Bootstrap $Bootstrap) {
             $this->Bootstrap = $Bootstrap;
             if (!is_object($this->Bootstrap->getApplication('Template'))) {
                 throw new Mexception('I need the class template');
@@ -65,8 +66,8 @@
                 'method' => $this->form[$identifier]['method'],
                 'action' => $this->form[$identifier]['action']
                 );
-            $this->form[$identifier]['header'] = $this->Template->parseSimple('form/formHeader.tpl', $vars);
-            $this->form[$identifier]['footer'] = $this->Template->parseSimple('form/formFooter.tpl');
+            $this->form[$identifier]['header'] = $this->Template->parseSimple('lib/Form/src/tpl/formHeader.tpl', $vars);
+            $this->form[$identifier]['footer'] = $this->Template->parseSimple('lib/Form/src/tpl/formFooter.tpl');
 
             return $identifier;
         }
@@ -226,7 +227,7 @@
                     'maxlength' => $maxlength
                     );
 
-                $return = $this->Template->parseSimple('form/input.tpl', $vars);
+                $return = $this->Template->parseSimple('lib/Form/src/tpl/input.tpl', $vars);
                 $this->form[$this->formId]['fields'][$name] = $return;
 
                 return true;
@@ -242,7 +243,7 @@
                     'value' => $label
                     );
 
-                $return = $this->Template->parseSimple('form/label.tpl', $vars);
+                $return = $this->Template->parseSimple('lib/Form/src/tpl/label.tpl', $vars);
                 $this->form[$this->formId]['labels'][$name] = $return;
                 return true;
             } else {
