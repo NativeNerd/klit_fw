@@ -15,13 +15,23 @@
     namespace Src\Controller;
     class index {
         private $Bootstrap;
+        private $Query;
+        private $Template;
 
         public function __construct(\Core\Bootstrap $Bootstrap) {
             $this->Bootstrap = $Bootstrap;
+            $this->Query = $this->Bootstrap->getApplication('Query');
+            $this->Template = $this->Bootstrap->getApplication('Template');
+            return ;
         }
 
         public function show($uri) {
-            echo 'show';
+            $result = $this->Query->select()
+                ->table('log')
+                ->null()
+                ->execute();
+            $this->Template->open('de/index/index.tpl');
+            $this->Template->show();
         }
 
         public function __desctruct() {

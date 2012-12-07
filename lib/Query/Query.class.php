@@ -117,9 +117,9 @@
             'table' =>
                 array('join', 'values', 'fields', 'primary', 'null'),
             'primary' =>
-                array('join', 'where', 'using', 'order', 'limit'),
+                array('join', 'where', 'using', 'order', 'limit', 'execute'),
             'null' =>
-                array('join', 'where', 'using', 'order', 'limit'),
+                array('join', 'where', 'using', 'order', 'limit', 'execute'),
             'fields' =>
                 array('values', 'join', 'where', 'using', 'order', 'limit'),
             'values' =>
@@ -153,7 +153,7 @@
          * @param string $pass
          * @param string $db
          * @return (null)
-         * @throws Mexception
+         * @throws \Core\Mexception
          */
         public function __construct(\Core\Bootstrap $Bootstrap) {
             $this->sql = $Bootstrap->getApplication('Database');
@@ -166,21 +166,21 @@
          * @param function name $name
          * @param list of arguments $argv
          * @return \Model
-         * @throws Mexception
+         * @throws \Core\Mexception
          */
         public function __call($name, $argv) {
             if (in_array($name, $this->allowedCall, true)) {
                 if (!in_array($name, $this->allowedAfterward[end($this->marker)])
                     AND count($this->marker) > 0) {
-                    throw new Mexception('Function '.$name.' is not allowed to be called here');
+                    throw new \Core\Mexception('Function '.$name.' is not allowed to be called here');
                 }
                 if (($this->$name($argv)) === false) {
-                    throw new Mexception('Function '.$name.' had an error');
+                    throw new \Core\Mexception('Function '.$name.' had an error');
                 }
                 $this->_setMarker($name);
                 return $this;
             } else {
-                throw new Mexception('Function '.$name.' is not allowed to access');
+                throw new \Core\Mexception('Function '.$name.' is not allowed to access');
             }
         }
 
@@ -200,7 +200,7 @@
          * @param mixed $value
          * @param string $type
          * @return mixed
-         * @throws Mexception
+         * @throws \Core\Mexception
          */
         public function _ensureByType($value, $type) {
             try {
@@ -229,9 +229,9 @@
                     case 'datetime' :
                         return $this->_ensureDatetime($value);
                     default :
-                        throw new Mexception('Unknown field type');
+                        throw new \Core\Mexception('Unknown field type');
                 }
-            } catch (Mexception $e) {
+            } catch (\Core\Mexception $e) {
                 $e->quit($e->getMessage());
             }
         }
@@ -295,16 +295,16 @@
          *
          * @param datetime $date
          * @return datetime
-         * @throws Mexception
+         * @throws \Core\Mexception
          */
         public function _ensureDatetime($date) {
             try {
                 if (is_int(strtotime($date))) {
                     return $date;
                 } else {
-                    throw new Mexception('Invalid date/time format');
+                    throw new \Core\Mexception('Invalid date/time format');
                 }
-            } catch (Mexception $e) {
+            } catch (\Core\Mexception $e) {
                 $e->quit($e->getMessage());
             }
         }
@@ -336,12 +336,12 @@
          *
          * @param string $table
          * @return boolean
-         * @throws Mexception
+         * @throws \Core\Mexception
          */
         private function _fetchTableinfo($table) {
             $result = $this->sql->query('SHOW COLUMNS FROM `'.$this->_ensureString($table).'`;');
             if (!is_object($result)) {
-                throw new Mexception('Fetch tableinfo of table '.$table.' failed');
+                throw new \Core\Mexception('Fetch tableinfo of table '.$table.' failed');
             }
             while ($row = $result->fetch_assoc()) {
                 if ($row['Null'] == 'YES') {
@@ -359,13 +359,13 @@
          *
          * @param string $field
          * @return string
-         * @throws Mexception
+         * @throws \Core\Mexception
          */
         public function _fetchField($field) {
             if (isset($this->info[$this->activeTable.'_'.$field])) {
                 return $this->activeTable.'_'.$field;
             } else {
-                throw new Mexception('Unknown field');
+                throw new \Core\Mexception('Unknown field');
             }
         }
 
@@ -618,12 +618,12 @@
          *
          * @param array $argv
          * @return boolean
-         * @throws Mexception
+         * @throws \Core\Mexception
          */
         private function join($argv) {
             if (!isset($argv[1])) $argv[1] = 'inner';
             elseif ($argv[1] != 'left' AND $argv[1] != 'right' AND $argv[1] != 'inner')
-                throw new Mexception('Unknown join condition');
+                throw new \Core\Mexception('Unknown join condition');
             $this->activeTable = $argv[0];
             $this->_fetchTableinfo($argv[0]);
             $this->_addElement('join',  array('table'=>$argv[0], 'type'=>$argv[1]));
@@ -635,11 +635,11 @@
          *
          * @param array $argv
          * @return boolean
-         * @throws Mexception
+         * @throws \Core\Mexception
          */
         private function using($argv) {
             if (!isset($this->info[$argv[0]])) {
-                throw new Mexception('Unknown column');
+                throw new \Core\Mexception('Unknown column');
             } else {
                 $this->_addElement('using', $argv[0]);
                 return true;
@@ -761,19 +761,19 @@
          *
          * @param array $argv
          * @return boolean
-         * @throws Mexception
+         * @throws \Core\Mexception
          */
         private function order($argv) {
             if (isset($argv[1])) {
                 if (!in_array($argv[1], $this->allowedOrder) AND !isset($this->info[$argv[0]])) {
                     $this->_addElement('order', array(array($argv[0], $argv[1])));
                 } else {
-                    throw new Mexception('Unknown order type/Unknown column');
+                    throw new \Core\Mexception('Unknown order type/Unknown column');
                 }
             } else {
                 foreach ($argv[0] AS $value) {
                     if (!in_array($value[1], $this->allowedOrder) OR !isset($this->info[$value[0]])) {
-                        throw new Mexception('Unknown order type/unknown column');
+                        throw new \Core\Mexception('Unknown order type/unknown column');
                     }
                 }
                 $this->_addElement('order', $argv[0]);
@@ -816,10 +816,11 @@
          * Parses and executes the created statement
          *
          * @return mixed
-         * @throws Mexception
+         * @throws \Core\Mexception
          */
         private function execute() {
-            $type = null; $table = null; $fields = null; $values = null; $where = null; $limit = null;
+            $type = null; $table = null; $fields = null; $values = null; $limit = null; $order = null;
+            $join = null; $using = null; $where = null;
             // Parse query
             foreach ($this->statement AS $value) {
                 switch ($value['type']) {
@@ -836,7 +837,7 @@
                         $values = $this->parseValues($value['value'], $type);
                         break;
                     case 'where' :
-                        $this->parseWhere($value['value']);
+                        $where[] = $this->parseWhere($value['value']);
                         break;
                     case 'order' :
                         $order = $this->parseOrder($value['value']);
@@ -851,26 +852,35 @@
                         $using[] = $this->parseUsing($value['value']);
                         break;
                     default :
-                        throw new Mexception('Unknown Type '.$value['type']);
+                        throw new \Core\Mexception('Unknown Type '.$value['type']);
                 }
             }
 
-            // Here we do some work to provide the correct work of the class
             // Get where conditions
-            $where = $this->tmp_where;
-            // build joins
-            $join = array_combine($join, $using);
-            $tmp = '';
-            foreach ($join AS $key=>$value) {
-                $tmp .= $key.' '.$value;
+            if (is_array($where)) {
+                $tmp = '';
+                foreach ($where AS $value) {
+                    $tmp .= $value;
+                }
+                $where = $tmp;
+                unset($tmp);
             }
-            $join = $tmp;
+
+            // build joins
+            if (is_array($join) AND is_array($using)) {
+                $join = array_combine($join, $using);
+                $tmp = '';
+                foreach ($join AS $key=>$value) {
+                    $tmp .= $key.' '.$value;
+                }
+                $join = $tmp;
             unset($tmp);
+            }
 
             if ($type == 'SELECT') {
                 $neededMarker = array('fields', 'table');
                 if (!$this->_validateMarker($neededMarker)) {
-                    throw new Mexception('Statement not complete');
+                    throw new \Core\Mexception('Statement not complete');
                 }
 
                 // SELECT [fields]
@@ -883,7 +893,7 @@
             } elseif ($type == 'UPDATE') {
                 $neededMarker = array('table', 'values', 'where');
                 if (!$this->_validateMarker($neededMarker)) {
-                    throw new Mexception('Statement not complete');
+                    throw new \Core\Mexception('Statement not complete');
                 }
 
                 // UPDATE [table]
@@ -894,7 +904,7 @@
             } elseif ($type == 'DELETE') {
                 $neededMarker = array('table', 'where', 'limit');
                 if (!$this->_validateMarker($neededMarker)) {
-                    throw new Mexception('Statement not complete');
+                    throw new \Core\Mexception('Statement not complete');
                 }
 
                 // DELETE FROM [table]
@@ -905,14 +915,12 @@
             } elseif ($type == 'INSERT') {
                 $neededMarker = array('table', 'fields', 'values');
                 if (!$this->_validateMarker($neededMarker)) {
-                    throw new Mexception('Statement not complete');
+                    throw new \Core\Mexception('Statement not complete');
                 }
                 // INSERT INTO [table] ([fields])
                 //      VALUES ([values])
                 $query = "INSERT INTO $table ($fields) VALUES ($values) ;";
             }
-
-            var_dump($query);
 
             // Throw query through database and give result back
             $this->result = $this->sql->query($query);
@@ -924,7 +932,7 @@
          *
          * @param string $type
          * @return string
-         * @throws Mexception
+         * @throws \Core\Mexception
          */
         private function parseType($type) {
             switch ($type) {
@@ -937,7 +945,7 @@
                 case 'insert' :
                     return 'INSERT';
                 default :
-                    throw new Mexception('Unknown Type '.$type);
+                    throw new \Core\Mexception('Unknown Type '.$type);
             }
         }
 
@@ -995,14 +1003,14 @@
          * @param string $values
          * @param string $type
          * @return string
-         * @throws Mexception
+         * @throws \Core\Mexception
          */
         private function parseValues($values, $type) {
             if ($type == 'UPDATE') {
                 $return = '';
                 foreach ($this->tmp_fields AS $key=>$value) {
                     if (!isset($this->info[$value]))
-                        throw new Mexception('Unknown field');
+                        throw new \Core\Mexception('Unknown field');
                     if (isset($values[$key])) {
                         if (strlen($return) == 0) {
                             $return = '`'.$value.'`'.' = '.Helper::db_notationByType(
@@ -1016,7 +1024,7 @@
                                     ), $this->info[$value]['type']);
                         }
                     } else {
-                        throw new Mexception('There is no value for a given field');
+                        throw new \Core\Mexception('There is no value for a given field');
                     }
                 }
                 return $return;
@@ -1045,15 +1053,15 @@
          *
          * @param array $where
          * @return boolean
-         * @throws Mexception
+         * @throws \Core\Mexception
          */
         private function parseWhere($where) {
             //                                       field     operator  condition relation
             // $this->statement[]['where'][] = array($argv[0], $argv[1], $argv[2], $argv[3]);
 
             // fetch where conditions
-            if (strlen($this->tmp_where) == 0) {
-                $this->tmp_where = 'WHERE '.
+            if (strlen($where[3]) == 0) {
+                return 'WHERE '.
                         '`'.
                         $where[0].
                         '`'.
@@ -1064,10 +1072,7 @@
                             $this->_ensureByType($where[2], $this->info[$where[0]]['type']),
                             $this->info[$where[0]]['type']);
             } else {
-                if (strlen($where[3]) == 0) {
-                    throw new Mexception('Unexpected value in where');
-                }
-                $this->tmp_where .= ' '.
+                return ' '.
                         $where[3].
                         ' '.
                         '`'.
@@ -1080,7 +1085,6 @@
                             $this->_ensureByType($where[2], $this->info[$where[0]]['type']),
                             $this->info[$where[0]]['type']);
             }
-            return true;
         }
 
         /**

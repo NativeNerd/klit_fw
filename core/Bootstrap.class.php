@@ -23,9 +23,51 @@
          * @param string $namespace
          */
         public function registerApplication($applicationName, $className, $namespace) {
-            if (class_exists($namespace.'\\'.$className, false)) {
+            $fullClassName = $namespace.'\\'.$className;
+            if (class_exists($fullClassName, false)) {
                 $this->registered[$applicationName] = $namespace.'\\'.$className;
                 return true;
+            } else {
+                $path = \Lib\Helper::buildPath('lib/'.$applicationName.'/'.$className.'.class.php');
+                if (file_exists($path)) {
+                    require_once $path;
+                }
+                if (class_exists($fullClassName, false)) {
+                    $this->registered[$applicationName] = $namespace.'\\'.$className;
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        /**
+         * Looks wheter an application is registered
+         *
+         * @param string $applicationName
+         * @return boolean
+         */
+        public function isRegistered($applicationName) {
+            if (isset($this->registered[$applicationName])) {
+                return true;
+            }
+            return false;
+        }
+
+        /**
+         * Creates a new instance of the given application
+         *
+         * @param string $applicationName
+         * @return boolean
+         */
+        public function openInstance($applicationName) {
+            if ($this->isRegistered($applicationName)) {
+                $fullClassName = $this->registered[$applicationName];
+                $this->$applicationName = new $fullClassName($this);
+                if (is_object($this->$applicationName)) {
+                    return true;
+                } else {
+                    return false;
+                }
             } else {
                 return false;
             }
@@ -62,11 +104,15 @@
          * @return (object|boolean)
          */
         public function getApplication($applicationName) {
-            if (is_object($this->$applicationName)) {
+            if (isset($this->$applicationName)) {
                 return $this->$applicationName;
-            } else {
-                return false;
             }
+            if ($this->isRegistered($applicationName)) {
+                if ($this->openInstance($applicationName)) {
+                    return $this->$applicationName;
+                }
+            }
+            return false;
         }
     }
 ?>

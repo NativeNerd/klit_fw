@@ -23,22 +23,42 @@
         }
 
         public function run() {
-            $uri = \Lib\Helper::parseUri();
-            $path = \Lib\Helper::buildPath('src/controller/'.$uri['main'].'/'.$uri['main'].'.controller.php');
-            if (file_exists($path)) {
-                require_once $path;
-            } else {
-                throw new \Core\Mexception('Unknown controller');
+            try {
+                $uri = \Lib\Helper::parseUri();
+                $path = \Lib\Helper::buildPath('src/controller/'.$uri['main'].'/'.$uri['main'].'.controller.php');
+                if (file_exists($path)) {
+                    require_once $path;
+                } else {
+                    throw new \Core\Mexception('Unknown controller');
+                }
+                $class = '\Src\Controller\\'.$uri['main'];
+                $Controller = new $class($this->Bootstrap);
+                if (method_exists($Controller, $uri['action'])) {
+                    $action = $uri['action'];
+                    $Controller->$action($uri);
+                } else {
+                    throw new \Core\Mexception('Unknown action');
+                }
+            } catch (\Core\Mexception $E) {
+                $path = \Lib\Helper::buildPath('src/controller/'
+                    . \Config\Controller::DEFAULT_CONTROLLER
+                    . '/'
+                    . \Config\Controller::DEFAULT_CONTROLLER
+                    . '.controller.php');
+                if (file_exists($path)) {
+                    require_once $path;
+                } else {
+                    throw new \Core\Mexception('Unable to load default controller');
+                }
+                $class = '\Src\Controller\\' . \Config\Controller::DEFAULT_CONTROLLER;
+                $Controller = new $class($this->Bootstrap);
+                if (method_exists($Controller, \Config\Controller::DEFAULT_ACTION)) {
+                    $action = \Config\Controller::DEFAULT_ACTION;
+                    $Controller->$action(false);
+                } else {
+                    throw new \Core\Mexception('Unable to execute default action');
+                }
             }
-            $class = '\Src\Controller\\'.$uri['main'];
-            $Controller = new $class($this->Bootstrap);
-            if (method_exists($Controller, $uri['action'])) {
-                $action = $uri['action'];
-                $Controller->$action($uri);
-            } else {
-                throw new Mexception('Unknown action');
-            }
-            return true;
         }
 
         public function __desctruct() {

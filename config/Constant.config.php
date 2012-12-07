@@ -16,5 +16,7 @@
 
     namespace Config;
 
-    define('MEXCEPTION_ELEVEL', 9);
+    class Constant {
+        const MEXCEPITION_ELEVEL = 7;
+    }
 ?>

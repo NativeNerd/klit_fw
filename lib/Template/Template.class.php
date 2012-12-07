@@ -34,13 +34,13 @@
 
         public $return_unsetValue = '(null)';
 
-        public function __construct(\Core\Bootstrap $Bootstrap, $dir_template) {
-            if (($this->dir_templates = Helper::buildPath($dir_template)) !== false) {
+        public function __construct(\Core\Bootstrap $Bootstrap) {
+            if (($this->dir_templates = Helper::buildPath(\Config\Template::DIR)) !== false) {
                 $this->Bootstrap = $Bootstrap;
-                $this->dir_templates_origin = $dir_template;
+                $this->dir_templates_origin = \Config\Template::DIR;
                 return ;
             } else {
-                throw new Mexception('Unknown directory given');
+                throw new \Core\Mexception('Unknown directory given');
             }
         }
 
@@ -52,7 +52,7 @@
                 $this->tpl_main = Helper::buildPath($template);
                 return true;
             } else {
-                throw new Mexception('Unknown template');
+                throw new \Core\Mexception('Unknown template');
             }
             return true;
         }
@@ -64,7 +64,7 @@
 
         private function assignWithScope($name, $value, $scope = 'assigned') {
             if ($scope !== 'assigned' AND $scope != 'declared' AND $scope != 'internal') {
-                throw new Mexception('Unknown variable scope');
+                throw new \Core\Mexception('Unknown variable scope');
             } else {
                 $this->tpl_vars[$scope][$name] = $value;
                 return true;
@@ -84,7 +84,7 @@
                 }
             }
             if ($scope !== 'assigned' AND $scope != 'declared' AND $scope != 'internal') {
-                throw new Mexception('Unknown variable scope');
+                throw new \Core\Mexception('Unknown variable scope');
             } elseif (strstr($name, ':')) {
                 // Explode by delimiter
                 $name = explode(':', $name);
@@ -124,6 +124,11 @@
             }
             $return = $object->parse();
             return $return;
+        }
+
+        public function show() {
+            echo $this->parse();
+            return true;
         }
 
         public function parse() {
@@ -264,7 +269,7 @@
                 $this->tpl_vars = $object->tpl_vars;
                 return $return;
             } else {
-                throw new Mexception('Unknown include');
+                throw new \Core\Mexception('Unknown include');
             }
         }
 
@@ -309,7 +314,7 @@
                         $match[6] = false;
                     }
                     if (!in_array($match[5], $this->allowedRelationsIf)) {
-                        throw new Mexception('Unknown relation');
+                        throw new \Core\Mexception('Unknown relation');
                     }
                     $match[4] = $this->getVariable(substr($match[4], 1), -1);
                     $match[6] = $this->getVariable(substr($match[6], 1), -1);
@@ -329,7 +334,7 @@
                 } elseif (strlen($match[4]) == 0 AND strlen($match[8]) > 0) {
                     // Match a function
                     if (!in_array($match[8], $this->allowedFunctionsIf)) {
-                        throw new Mexception('Unknown function');
+                        throw new \Core\Mexception('Unknown function');
                     }
                     $name = '_'.$match[8];
                     $if = $this->$name($this->getVariable(substr($match[9], 1), -1));
@@ -340,10 +345,10 @@
                         return null;
                     }
                 } else {
-                    throw new Mexception('Bad match array');
+                    throw new \Core\Mexception('Bad match array');
                 }
             } else {
-                throw new Mexception('Unknown condition type');
+                throw new \Core\Mexception('Unknown condition type');
             }
         }
 

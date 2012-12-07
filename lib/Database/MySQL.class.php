@@ -22,14 +22,18 @@
      */
     namespace Lib;
     class MySQL extends \mysqli {
+        private $Bootstrap;
         private $query_singleResult         = null;
         private $results                    = array();
 
-        public function __construct($host = false, $user = false, $pass = false, $db = false, $charset = 'utf8') {
-            parent::__construct($host, $user, $pass, $db);
+        public function __construct(\Core\Bootstrap $Bootstrap) {
+            parent::__construct(\Config\Database::HOST,
+                \Config\Database::USER,
+                \Config\Database::PASS,
+                \Config\Database::DATABASE);
             if (mysqli_connect_error()) throw new Mexception('Unable to connect to db');
-            $this->choosedb = parent::select_db($db);
-            $this->query('SET NAMES \''.$charset.'\';');
+            $this->choosedb = parent::select_db(\Config\Database::DATABASE);
+            $this->query('SET NAMES \'' . \Config\Database::CHARSET . '\';');
             return ;
         }
 

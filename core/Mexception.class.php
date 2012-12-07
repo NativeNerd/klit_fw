@@ -32,7 +32,7 @@
             if (is_object($message)) {
                 $message = $message->message;
             }
-            if (MEXCEPTION_ELEVEL == -1) {
+            if (\Config\Constant::MEXCEPITION_ELEVEL == -1) {
                 if (is_numeric(substr($message, 0, 4))) {
                     $message = substr($message, 0, 4);
                 } else {
@@ -54,8 +54,10 @@
         * @return null
         */
         public static function handle($errno, $errstr, $errfile, $errline, $errcontext) {
-            if ($errno > 16) Mexception::quit($errno.': '.$errstr.' in '.$errfile.' at line '.$errline);
-            elseif (MEXCEPTION_ELEVEL >= 7) echo $errno.': '.$errstr.' in '.$errfile.' at line '.$errline;
+            if ($errno > 16)
+                Mexception::quit($errno.': '.$errstr.' in '.$errfile.' at line '.$errline);
+            elseif (\Config\Constant::MEXCEPITION_ELEVEL > 7)
+                echo $errno.': '.$errstr.' in '.$errfile.' at line '.$errline."\n";
             else return ;
         }
     }
