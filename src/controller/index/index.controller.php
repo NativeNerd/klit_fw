@@ -26,11 +26,6 @@
         }
 
         public function show($uri) {
-            $this->Query->select()
-                ->table('log')
-                ->fields(null)
-                ->execute();
-            $this->Template->assign('test', $this->Query->getResult()->fetch_all(MYSQLI_ASSOC));
             $this->Template->open('index/index.tpl');
             $this->Template->show();
         }

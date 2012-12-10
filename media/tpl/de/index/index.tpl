@@ -2,10 +2,4 @@
 
 Index
 
-{foreach ($test)}
-    {$.key} => {$.value:time}
-{/foreach}
-
-Index end
-
 {include (_master/footer.tpl)}
