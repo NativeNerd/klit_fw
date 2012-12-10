@@ -18,7 +18,6 @@
      * 3.0.0    3.0.1   Multi-Query-Option entfernt (überflüssig)
      *          3.0.1   Error-Handling verbessert, Fehlernummer wird nun auch genutzt und behandelt
      *
-     * release candidate
      */
     namespace Lib;
     class MySQL extends \mysqli {
