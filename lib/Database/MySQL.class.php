@@ -31,7 +31,7 @@
                 \Config\Database::USER,
                 \Config\Database::PASS,
                 \Config\Database::DATABASE);
-            if (mysqli_connect_error()) throw new Mexception('Unable to connect to db');
+            if (mysqli_connect_error()) throw new \core\Mexception('Unable to connect to db');
             $this->choosedb = parent::select_db(\Config\Database::DATABASE);
             $this->query('SET NAMES \'' . \Config\Database::CHARSET . '\';');
             return ;
@@ -104,7 +104,7 @@
                     return 1304;
                     break;
                 default :
-                    throw new Mexception('Unknown sql error id '.$this->errno);
+                    throw new \Core\Mexception('Unknown sql error id '.$this->errno);
                     break;
             }
         }

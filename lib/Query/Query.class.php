@@ -84,7 +84,7 @@
             'order',
             'limit',
             'execute'
-           );
+            );
         /**
          * Contains allowed relations in the WHERE-statement
          * @var array
@@ -121,7 +121,7 @@
             'null' =>
                 array('join', 'where', 'using', 'order', 'limit', 'execute'),
             'fields' =>
-                array('values', 'join', 'where', 'using', 'order', 'limit'),
+                array('values', 'join', 'where', 'using', 'order', 'limit', 'execute'),
             'values' =>
                 array('where', 'order', 'limit'),
             'where' =>
@@ -696,7 +696,7 @@
         private function fields($argv) {
             if (is_array($argv[0])) {
                 $this->_addElement('fields', $argv[0]);
-            } elseif ($argv !== null) {
+            } elseif ($argv[0] !== null) {
                 $this->_addElement('fields', array($argv));
             } else {
                 $this->_addElement('fields', null);
@@ -921,7 +921,6 @@
                 //      VALUES ([values])
                 $query = "INSERT INTO $table ($fields) VALUES ($values) ;";
             }
-
             // Throw query through database and give result back
             $this->result = $this->sql->query($query);
             return $this->result;

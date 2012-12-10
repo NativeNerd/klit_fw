@@ -9,24 +9,29 @@
      * previous     now     what changed
      *              1.0.0   -
      * 1.0.0        1.1.0   buildPath() neu ohne $character, gibt nun Fehler bei inexistentem Pfad (als default)
+     *              1.1.0   buildPath() now without $path (now $_unused)
      *
      */
     namespace Lib;
     final class Helper {
-        final static public function buildPath($pathInProjectDir, $path = null, $extension = null, $error = true) {
-            if (substr($pathInProjectDir, 0, 2) == '..') {
-                $pathInProjectDir = substr($pathInProjectDir, 3);
+        final static public function buildPath($path, $_unused = null, $extension = null, $error = true) {
+            if (substr($path, 0, 2) == '..') {
+                $path = substr($path, 3);
+                return \Lib\Helper::buildPath($path, null, $extension, $error);
             }
+
+            // Project directory
             $dir = substr($_SERVER['SCRIPT_FILENAME'], 0, -strlen(basename($_SERVER['SCRIPT_FILENAME'])))
-                .$path
-                .$pathInProjectDir;
+                .$path;
+
             if (is_dir($dir))
-                $dir .= '/';
+                return $dir .= '/';
             elseif (is_file($dir))
-                $dir .= $extension;
+                return $dir;
             elseif ($error)
+                throw new \Core\Mexception('Invalid path given');
+            else
                 return false;
-            return $dir;
         }
 
         final static public function buildDate($timestamp = null) {
@@ -64,6 +69,9 @@
             }
         }
 
+        /**
+         * @todo Implement to Query
+         */
         final static public function db_notationByType($value, $type) {
             $matches = array();
             if (!preg_match('$([a-zA-Z]+)\(([0-9]+)\)$', $type, $matches)) {
@@ -90,41 +98,6 @@
                     return '"'.$value.'"';
                 default :
                     return null;
-            }
-        }
-
-        final static public function form_byType($type, $value) {
-            switch ($type) {
-                case 'string' :
-                    return Helper::form_string($value);
-                case 'mail' :
-                    return Helper::form_mail($value);
-                case 'int' :
-                    return Helper::form_int($value);
-                default :
-                    return null;
-            }
-        }
-
-        final static public function form_string($string) {
-            if (is_string($string)) {
-                return true;
-            }
-        }
-
-        final static public function form_mail($mail) {
-            if (filter_var($mail, FILTER_VALIDATE_EMAIL) == false) {
-                return false;
-            } else {
-                return true;
-            }
-        }
-
-        final static public function form_int($value) {
-            if (is_numeric($value)) {
-                return true;
-            } else {
-                return false;
             }
         }
     }

@@ -12,8 +12,9 @@
      * previous     now     what changed
      *              1.0.0   -
      *
-     * @todo Bootstrap: Klassen jederzeit nachladen lassen
      * @todo JavaScript-Überprüfung
+     * @todo Optionlists
+     * @todo filter_var()
      *
      * Nutzung der Klasse
      * - Jede Klasse hat eine "formId"
@@ -41,12 +42,9 @@
 
         public function __construct(\Core\Bootstrap $Bootstrap) {
             $this->Bootstrap = $Bootstrap;
-            if (!is_object($this->Bootstrap->getApplication('Template'))) {
-                throw new Mexception('I need the class template');
-            } else {
-                $this->Template = $this->Bootstrap->getApplication('Template');
-            }
+            $this->Template = $this->Bootstrap->getApplication('Template');
             $this->Session = $this->Bootstrap->getApplication('Session');
+            return ;
         }
 
         public function openForm($identifier = null, $action = 'index.php', $method = 'POST') {

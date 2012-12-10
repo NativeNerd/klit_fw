@@ -13,7 +13,7 @@
      *
      */
     namespace Src\Controller;
-    class index {
+    class index implements \Core\Implement\controller {
         private $Bootstrap;
         private $Query;
         private $Template;
@@ -26,11 +26,12 @@
         }
 
         public function show($uri) {
-            $result = $this->Query->select()
+            $this->Query->select()
                 ->table('log')
-                ->null()
+                ->fields(null)
                 ->execute();
-            $this->Template->open('de/index/index.tpl');
+            $this->Template->assign('test', $this->Query->getResult()->fetch_all(MYSQLI_ASSOC));
+            $this->Template->open('index/index.tpl');
             $this->Template->show();
         }
 

@@ -20,6 +20,7 @@
         public function __construct(\Core\Bootstrap $Bootstrap) {
             $this->Bootstrap = $Bootstrap;
             $this->Bootstrap->openApplication($this, 'Controller');
+            require_once 'interface/controller.interface.php';
         }
 
         public function run() {

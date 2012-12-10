@@ -1,5 +1,11 @@
-{include (de/_master/header.tpl)}
+{include (_master/header.tpl)}
 
 Index
 
-{include (de/_master/footer.tpl)}
+{foreach ($test)}
+    {$.key} => {$.value:time}
+{/foreach}
+
+Index end
+
+{include (_master/footer.tpl)}
