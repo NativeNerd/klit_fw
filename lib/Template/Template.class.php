@@ -24,17 +24,58 @@
      */
     namespace Lib;
     class Template {
+        /**
+         * Contains the Bootstrap
+         * @var object
+         */
         private $Bootstrap;
+        /**
+         * Contains the origin given template dir
+         * @var string
+         */
         private $dir_templates_origin;
+        /**
+         * Contains the parsed dir
+         * @var string
+         */
         private $dir_templates;
+        /**
+         * Contains main template content
+         * @var string
+         */
         private $tpl_main;
+        /**
+         * Contains template variables
+         * @var array
+         */
         private $tpl_vars = array('internal' => array(), 'assigned' => array(), 'declared' => array());
+        /**
+         * Contains all templates
+         * @var array
+         */
         private $tpl_contents = array();
+        /**
+         * Contains allowed if-Relations
+         * @var array
+         */
         private $allowedRelationsIf = array('<=', '>=', '==');
+        /**
+         * Contains a list of allowed functions
+         * @var array
+         */
         private $allowedFunctionsIf = array('is_numeric');
-
+        /**
+         * This string is given back if a variable is not assigned
+         * @var string
+         */
         public $return_unsetValue = '(null)';
 
+        /**
+         * Initializes the class
+         * @param \Core\Bootstrap $Bootstrap
+         * @return null
+         * @throws \Core\Mexception
+         */
         public function __construct(\Core\Bootstrap $Bootstrap) {
             if (($this->dir_templates = Helper::buildPath(\Config\Template::DIR)) !== false) {
                 $this->Bootstrap = $Bootstrap;
@@ -45,6 +86,12 @@
             }
         }
 
+        /**
+         * Opens a new template
+         * @param string $template
+         * @return boolean
+         * @throws \Core\Mexception
+         */
         public function open($template) {
             if (file_exists($this->dir_templates.$template)) {
                 $this->tpl_main = $this->dir_templates.$template;
@@ -58,11 +105,25 @@
             return true;
         }
 
+        /**
+         * Assigns a variable into scope assigned
+         * @param string $name
+         * @param mixed $value
+         * @return boolean
+         */
         public function assign($name, $value) {
             $this->assignWithScope($name, $value);
             return true;
         }
 
+        /**
+         * Assigns a variable into a given scope
+         * @param string$name
+         * @param mixed $value
+         * @param string $scope
+         * @return boolean
+         * @throws \Core\Mexception
+         */
         private function assignWithScope($name, $value, $scope = 'assigned') {
             if ($scope !== 'assigned' AND $scope != 'declared' AND $scope != 'internal') {
                 throw new \Core\Mexception('Unknown variable scope');
@@ -72,6 +133,13 @@
             }
         }
 
+        /**
+         * Gets a variable
+         * @param string $name
+         * @param string $scope
+         * @return mixed
+         * @throws \Core\Mexception
+         */
         private function getVariable($name, $scope = 'assigned') {
             if ($scope == -1) {
                 if (substr($name, 0, 1) == '.') {
@@ -105,6 +173,12 @@
             }
         }
 
+        /**
+         * Parses a simple template, you get directly the parsed template back
+         * @param string $file
+         * @param array $assign
+         * @return string
+         */
         public function parseSimple($file, array $assign = array()) {
             /**
              * Steps:
@@ -127,11 +201,19 @@
             return $return;
         }
 
+        /**
+         * echoes the parsed template
+         * @return true
+         */
         public function show() {
             echo $this->parse();
             return true;
         }
 
+        /**
+         * Parses and gives back the template
+         * @return string
+         */
         public function parse() {
             /**
              * Structure of parsing
@@ -200,7 +282,11 @@
             return $main;
         }
 
-        // Done
+        /**
+         * Parses an {ignore}-Tag
+         * @param array $match
+         * @return string
+         */
         private function parseIgnore($match) {
             /**
              * The match array arrives as followed:
@@ -211,7 +297,11 @@
             return str_replace(array('{', '}'), array('&#123;', '&#125;'), $match[1]);
         }
 
-        // Done
+        /**
+         * Parses an {declare}-Tag
+         * @param array $match
+         * @return null
+         */
         private function parseDeclare($match) {
             /**
              * The match array arrives as followed:
@@ -227,7 +317,11 @@
             return null;
         }
 
-        // Done
+        /**
+         * Parses a {$}-Tag
+         * @param array $match
+         * @return string
+         */
         private function parseVariables($match) {
             /**
              * The match array arrives as followed:
@@ -253,7 +347,12 @@
             }
         }
 
-        // Done
+        /**
+         * Parses an {include}-Tag
+         * @param array $include
+         * @return string
+         * @throws \Core\Mexception
+         */
         private function parseInclude($include) {
             $include = $include[1];
             if (is_file($this->dir_templates.$include)) {
@@ -274,7 +373,12 @@
             }
         }
 
-        // Done
+        /**
+         * Parses an {if}-Tag
+         * @param array $match
+         * @return string
+         * @throws \Core\Mexception
+         */
         private function parseIfelse($match) {
             /**
              * Parsing If-Else is really hard... So here's the array given by the regex
@@ -353,7 +457,11 @@
             }
         }
 
-        // Done
+        /**
+         * Parses a {foreach}-Tag
+         * @param array $match
+         * @return string
+         */
         private function parseForeach($match) {
             /**
              * The match array arrives as followed
@@ -377,6 +485,11 @@
             }
         }
 
+        /**
+         * Parses a {form}-Tag
+         * @param array $match
+         * @return string
+         */
         private function parseForm($match) {
             /**
              * The match array arrives as followed
@@ -403,6 +516,11 @@
             }
         }
 
+        /**
+         * Parses a {label}-Tag
+         * @param array $match
+         * @return string
+         */
         private function parseLabel($match) {
             /**
              * The match array arrives as followed
@@ -431,6 +549,12 @@
             }
         }
 
+        /**
+         * Internal function
+         * Alias to: is_numeric
+         * @param mixed $value
+         * @return true
+         */
         private function _is_numeric($value) {
             return is_numeric($value);
         }

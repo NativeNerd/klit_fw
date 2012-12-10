@@ -13,7 +13,6 @@
      *              1.0.0   -
      *
      * @todo JavaScript-Überprüfung
-     * @todo Optionlists
      * @todo filter_var()
      *
      * Nutzung der Klasse
@@ -27,7 +26,7 @@
      *      - Ob jedes Feld korrekte eingaben enthält
      */
     namespace Lib;
-    class FormNew {
+    class Form {
         private $Bootstrap;
         private $Template;
         private $form;
@@ -232,6 +231,90 @@
             } else {
                 return false;
             }
+        }
+
+        public function addSelect($name, $size = 1, $multiple = false, $disabled = false) {
+            $this->form[$this->formId]['fields'][$name] = array();
+            if ($multiple == false) {
+                $multiple = null;
+            } else {
+                $multiple = 'multiple="multiple"';
+            }
+            if ($disabled == false) {
+                $disabled = null;
+            } else {
+                $disabled = 'disabled="disabled"';
+            }
+            if ($size != 1) {
+                $size = (int)$size;
+            } else {
+                $size = null;
+            }
+
+            $vars = array(
+                'multiple' => $multiple,
+                'disabled' => $disabled,
+                'size' => $size,
+                'name' => $name
+                );
+            $return = $this->Template->parseSimple('lib/Form/src/tpl/selectHeader.tpl', $vars);
+            $this->form[$this->formId]['fields'][$name]['header'] = $return;
+            $return = $this->Template->parseSimple('lib/Form/src/tpl/selectFooter.tpl', $vars);
+            $this->form[$this->formId]['fields'][$name]['footer'] = $return;
+            return true;
+        }
+
+        public function addOption($selectName, $name, $value, $label = false, $selected = false, $disabled = false) {
+            if (isset($this->form[$this->formId]['fields'][$selectName])) {
+                if ($selected == false) {
+                    $selected = null;
+                } else {
+                    $selected = 'selected="selected"';
+                }
+                if ($disabled == false) {
+                    $disabled = null;
+                } else {
+                    $disabled = 'disabled="disabled"';
+                }
+                if ($label == false) {
+                    $label = null;
+                } else {
+                    $label = 'label="'.htmlspecialchars($label).'"';
+                }
+                if (isset($_POST[$selectName]) AND strlen($value) == 0) {
+                    if ($_POST[$selectName] == $name) {
+                        $selected = 'selected="selected"';
+                    }
+                }
+
+                $vars = array(
+                    'selected' => $selected,
+                    'disabled' => $disabled,
+                    'label' => $label,
+                    'value' => $value,
+                    'name' => $name,
+                    'value' => $value
+                    );
+                $return = $this->Template->parseSimple('lib/Form/src/tpl/selectBody.tpl', $vars);
+                $this->form[$this->formId]['fields'][$selectName]['body'][] = $return;
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        public function closeSelect($selectName) {
+            if (!isset($this->form[$this->formId]['fields'][$selectName])) {
+                return false;
+            }
+            $return = '';
+            $return .= $this->form[$this->formId]['fields'][$selectName]['header'];
+            foreach ($this->form[$this->formId]['fields'][$selectName]['body'] AS $value) {
+                $return .= $value;
+            }
+            $return .= $this->form[$this->formId]['fields'][$selectName]['footer'];
+            $this->form[$this->formId]['fields'][$selectName] = $return;
+            return true;
         }
 
         public function addLabel($name, $label) {

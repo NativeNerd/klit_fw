@@ -6,6 +6,8 @@
      * @copyright Klauenbösch IT Services
      * @link http://www.klit.ch
      *
+     * @desc Some helping functions
+     *
      * previous     now     what changed
      *              1.0.0   -
      * 1.0.0        1.1.0   buildPath() neu ohne $character, gibt nun Fehler bei inexistentem Pfad (als default)
@@ -14,7 +16,16 @@
      */
     namespace Lib;
     final class Helper {
-        final static public function buildPath($path, $_unused = null, $extension = null, $error = true) {
+        /**
+         * Builds an absolute path
+         * @param string $path
+         * @param null $_unused
+         * @param null $_unused2
+         * @param boolean $error
+         * @return string|boolean
+         * @throws \Core\Mexception
+         */
+        final static public function buildPath($path, $_unused = null, $_unused2 = null, $error = true) {
             if (substr($path, 0, 2) == '..') {
                 $path = substr($path, 3);
                 return \Lib\Helper::buildPath($path, null, $extension, $error);
@@ -34,22 +45,40 @@
                 return false;
         }
 
+        /**
+         * Builds a database compatible date of a given timestamp
+         * @param int $timestamp
+         * @return string
+         */
         final static public function buildDate($timestamp = null) {
             if ($timestamp == null)
                 $timestamp = time();
             return date('Y-m-d', $timestamp);
         }
 
+        /**
+         * Builds a database compatible datetime of a given timestamp
+         * @param int $timestamp
+         * @return string
+         */
         final static public function buildDatetime($timestamp = null) {
             if ($timestamp == null)
                 $timestamp = time();
             return date('Y-m-d H:i:s', $timestamp);
         }
 
+        /**
+         * Containts the user ip adress
+         * @return string
+         */
         final static public function getIp() {
             return $_SERVER['REMOTE_ADDR'];
         }
 
+        /**
+         * Parses an URI
+         * @return array|boolean
+         */
         final static public function parseUri() {
             if (strlen($_SERVER['QUERY_STRING']) > 0) {
                 $str = explode('&', $_SERVER['QUERY_STRING']);
@@ -70,7 +99,11 @@
         }
 
         /**
-         * @todo Implement to Query
+         * Notates $value like a given type, database compatible
+         * @todo Implement into class Query
+         * @param mixed $value
+         * @param string $type
+         * @return null|string
          */
         final static public function db_notationByType($value, $type) {
             $matches = array();

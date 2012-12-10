@@ -17,12 +17,20 @@
     class Controller {
         private $Bootstrap;
 
+        /**
+         * Initializes the class
+         * @param \Core\Bootstrap $Bootstrap
+         */
         public function __construct(\Core\Bootstrap $Bootstrap) {
             $this->Bootstrap = $Bootstrap;
             $this->Bootstrap->openApplication($this, 'Controller');
             require_once 'interface/controller.interface.php';
         }
 
+        /**
+         * Runs the application
+         * @throws \Core\Mexception
+         */
         public function run() {
             try {
                 $uri = \Lib\Helper::parseUri();
@@ -62,6 +70,9 @@
             }
         }
 
+        /**
+         * Closes the class
+         */
         public function __desctruct() {
 
         }

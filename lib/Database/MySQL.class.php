@@ -22,21 +22,44 @@
      */
     namespace Lib;
     class MySQL extends \mysqli {
+        /**
+         * Contains the Bootstrap object
+         * @var object
+         */
         private $Bootstrap;
+        /**
+         * Contains the last result object of a single query
+         * @var object
+         */
         private $query_singleResult         = null;
+        /**
+         * Contains all result object
+         * @var array
+         */
         private $results                    = array();
 
+        /**
+         * Initializes the class
+         * @param \Core\Bootstrap $Bootstrap
+         * @return null
+         * @throws \Core\Mexception
+         */
         public function __construct(\Core\Bootstrap $Bootstrap) {
             parent::__construct(\Config\Database::HOST,
                 \Config\Database::USER,
                 \Config\Database::PASS,
                 \Config\Database::DATABASE);
-            if (mysqli_connect_error()) throw new Mexception('Unable to connect to db');
+            if (mysqli_connect_error()) throw new \Core\Mexception('Unable to connect to db');
             $this->choosedb = parent::select_db(\Config\Database::DATABASE);
             $this->query('SET NAMES \'' . \Config\Database::CHARSET . '\';');
             return ;
         }
 
+        /**
+         * Does a query
+         * @param string $query
+         * @return object
+         */
         public function query($query) {
             $result = parent::query($query);
             if (!$result) {
@@ -72,14 +95,27 @@
             }
         }
 
+        /**
+         * Gives back the insert id
+         * @return id
+         */
         public function insertId() {
             return $this->insert_id;
         }
 
+        /**
+         * Returns some statistics
+         * @return array
+         */
         public function stat() {
             return array($this->queryCount);
         }
 
+        /**
+         * Handles errors
+         * @return int
+         * @throws \Core\Mexception
+         */
         public function handleError() {
             switch ($this->errno) {
                 case 1022 : # Duplicate key
@@ -109,6 +145,9 @@
             }
         }
 
+        /**
+         * Closes the class
+         */
         public function __destruct() {
             foreach($this->results as $value) {
                 if (is_object($value)) @$value->free_result();
