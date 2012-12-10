@@ -31,7 +31,7 @@
                 \Config\Database::USER,
                 \Config\Database::PASS,
                 \Config\Database::DATABASE);
-            if (mysqli_connect_error()) throw new Mexception('Unable to connect to db');
+            if (mysqli_connect_error()) throw new \core\Mexception('Unable to connect to db');
             $this->choosedb = parent::select_db(\Config\Database::DATABASE);
             $this->query('SET NAMES \'' . \Config\Database::CHARSET . '\';');
             return ;
