@@ -104,7 +104,7 @@
                     return 1304;
                     break;
                 default :
-                    throw new Mexception('Unknown sql error id '.$this->errno);
+                    throw new \Core\Mexception('Unknown sql error id '.$this->errno);
                     break;
             }
         }

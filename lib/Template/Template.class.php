@@ -10,6 +10,7 @@
      *
      * previous     now     what changed
      *              1.0.0   -
+     *              1.0.0   fixed a bug with arrays in parseForeach()
      *
      * @todo Scopes der Variablen verbessern (declared sollen überall verfügbar sein)
      *  => Zieht ein line-by-line-parsing nach sich
@@ -24,9 +25,9 @@
     namespace Lib;
     class Template {
         private $Bootstrap;
-        private $dir_templates_origin = './media/tpl/';
-        private $dir_templates = './media/tpl/';
-        private $tpl_main = '';
+        private $dir_templates_origin;
+        private $dir_templates;
+        private $tpl_main;
         private $tpl_vars = array('internal' => array(), 'assigned' => array(), 'declared' => array());
         private $tpl_contents = array();
         private $allowedRelationsIf = array('<=', '>=', '==');
@@ -152,23 +153,23 @@
             $main = &$this->tpl_contents[$this->tpl_main];
 
             // Search for ignore-Tags
-            $main = preg_replace_callback('/\{ignore\}(.+?)\{\/ignore\}/s',
+            $main = preg_replace_callback(\Config\Template::REGEXP_IGNORE,
                 array($this, 'parseIgnore'), $main);
 
             // Search for declarations
-            $main = preg_replace_callback('/\{declare([\s]+)\(\$([\w]+)\)([\s]+)\((.*)\)\}\n/',
+            $main = preg_replace_callback(\Config\Template::REGEXP_DECLARE,
                 array($this, 'parseDeclare'), $main);
 
             // Search for variables
-            $main = preg_replace_callback('/\{\$([\w:]+)\}/',
+            $main = preg_replace_callback(\Config\Template::REGEXP_VARIABLE,
                 array($this, 'parseVariables'), $main);
 
             // Create Regex for control structure
-            $regex_cs_mid = '([\s]+)((\$[\w:\.]+)([=<>!]{2})([\$\w:\.]+|true|false)|(\!)([\w]+)\((\$[\w:\.]+)\))\}(.+?)';
-            $regex_cs_start = '/\{(if|else)';
-            $regex_cs_start_short = '/\{(if\.|else\.)';
-            $regex_cs_end = '{\/(if|else)\}/s';
-            $regex_cs_end_short = '\n/';
+            $regex_cs_mid = \Config\Template::REGEXP_CS_MID;
+            $regex_cs_start = \Config\Template::REGEXP_CS_START;
+            $regex_cs_start_short = \Config\Template::REGEXP_CS_STARTS;
+            $regex_cs_end = \Config\Template::REGEXP_CS_END;
+            $regex_cs_end_short = \Config\Template::REGEXP_CS_ENDS;
             $regex_cs = $regex_cs_start . $regex_cs_mid . $regex_cs_end;
             $regex_cs_short = $regex_cs_start_short . $regex_cs_mid . $regex_cs_end_short;
 
@@ -183,17 +184,17 @@
             } while ($count > 0 OR $count_short >0);
 
             // Search for includes
-            $main = preg_replace_callback('/\{include \(([a-zA-Z0-9._\/]+)\)\}/',
+            $main = preg_replace_callback(\Config\Template::REGEXP_INCLUDE,
                 array($this, 'parseInclude'), $main);
 
             // Search for forms
-            $main = preg_replace_callback('/\{form \(([\w:]+)\)([\s]*)((\(([\w]+)\))|)\}/',
+            $main = preg_replace_callback(\Config\Template::REGEXP_FORM,
                 array($this, 'parseForm'), $main);
-            $main = preg_replace_callback('/\{label \(([\w:]+)\)([\s]*)((\(([\w]+)\))|)\}/',
+            $main = preg_replace_callback(\Config\Template::REGEXP_LABEL,
                 array($this, 'parseLabel'), $main);
 
             // Search for loops
-            $main = preg_replace_callback('/\{foreach \(([\$\w\.:]+)\)\}(.+?)\{\/foreach\}/s',
+            $main = preg_replace_callback(\Config\Template::REGEXP_FOREACH,
                 array($this, 'parseForeach'), $main);
 
             return $main;
@@ -367,7 +368,10 @@
             } else {
                 $return = array();
                 foreach ($array AS $key=>$value) {
-                    $return[] = trim(str_replace(array('{$.value}', '{$.key}'), array($value, $key), $match[2]));
+                    $this->assignWithScope('key', $key, 'internal');
+                    $this->assignWithScope('value', $value, 'internal');
+                    $return[] = trim(preg_replace_callback(\Config\Template::REGEXP_INTERNAL,
+                        array($this, 'parseVariables'), $match[2], -1), "\n\r");
                 }
                 return implode("\n", $return);
             }

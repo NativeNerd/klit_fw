@@ -32,14 +32,15 @@
             if (is_object($message)) {
                 $message = $message->message;
             }
-            if (\Config\Constant::MEXCEPITION_ELEVEL == -1) {
+            if (\Config\Constant::MEXCEPTION_ELEVEL == -1) {
                 if (is_numeric(substr($message, 0, 4))) {
                     $message = substr($message, 0, 4);
                 } else {
                     $message = '(null)';
                 }
             }
-            echo str_replace('{$errorvalue}', $message, file_get_contents(\Lib\Helper::buildPath('core/error.html')));
+            echo str_replace('{$errorvalue}', $message,
+                file_get_contents(\Lib\Helper::buildPath(\Config\Constant::MEXCEPTION_EDOC)));
             die();
         }
 
@@ -56,7 +57,7 @@
         public static function handle($errno, $errstr, $errfile, $errline, $errcontext) {
             if ($errno > 16)
                 Mexception::quit($errno.': '.$errstr.' in '.$errfile.' at line '.$errline);
-            elseif (\Config\Constant::MEXCEPITION_ELEVEL > 7)
+            elseif (\Config\Constant::MEXCEPTION_ELEVEL > 7)
                 echo $errno.': '.$errstr.' in '.$errfile.' at line '.$errline."\n";
             else return ;
         }

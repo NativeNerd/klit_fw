@@ -42,7 +42,7 @@ Variable gemäss intern:
 
 /** Für if-Konstrukte
     * Zugelassen sind: definierte Funktionen gemäss Syntaxbeispiel 2
-    * Funktionen können negiert werden
+    * Funktionen können negiert werden mit !
     * Vergleiche zweier Variablen mit den zugelassenen Vergleichsoperatoren
     * Vergleichsoperatoren sind: ==, <=, >=, !=
 
@@ -65,7 +65,7 @@ Variable gemäss intern:
 {/foreach}
 
 /** Für includes
-    * Includes werden in einem eigenen Bereich geparst
+    * Includes werden in einer eigenen Instanz geparst
     * Es besteht nur Zugriff auf Variablen des 1. Bereiches
 
 {include (a_template.tpl)}
