@@ -16,6 +16,7 @@
     namespace Core\Implement;
     interface controller {
         public function __construct(\Core\Bootstrap $Bootstrap);
+        public function fallback();
         public function __desctruct();
     }
 

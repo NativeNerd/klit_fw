@@ -26,8 +26,13 @@
         }
 
         public function show($uri) {
+            var_dump($uri);
             $this->Template->open('index/index.tpl');
             $this->Template->show();
+        }
+
+        public function fallback() {
+
         }
 
         public function __desctruct() {

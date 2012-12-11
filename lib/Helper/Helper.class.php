@@ -93,6 +93,21 @@
                     $newValue[] = $value[1];
                 }
                 return array_combine($newKey, $newValue);
+            } elseif (strlen($_SERVER['PATH_INFO']) > 0) {
+                $str = explode('/', $_SERVER['PATH_INFO']);
+                $newKey = array();
+                $newValue = array();
+                unset($str[0]);
+                $newKey[] = 'main'; $newValue[] = $str[1];
+                $newKey[] = 'action'; $newValue[] = $str[2];
+                unset($str[1]); unset($str[2]);
+                foreach ($str AS $value) {
+                   $tmp = explode(':', $value, 2);
+                   $newKey[] = $tmp[0];
+                   $newValue[] = $tmp[1];
+                   unset($tmp);
+                }
+                return array_combine($newKey, $newValue);
             } else {
                 return false;
             }

@@ -34,6 +34,11 @@
         public function run() {
             try {
                 $uri = \Lib\Helper::parseUri();
+                if (!$uri) {
+                    $uri['main'] = \Config\Controller::DEFAULT_CONTROLLER;
+                    $uri['action'] = \Config\Controller::DEFAULT_ACTION;
+                    $uri['do'] = \Config\Controller::DEFAULT_DO;
+                }
                 $path = \Lib\Helper::buildPath('src/controller/'.$uri['main'].'/'.$uri['main'].'.controller.php');
                 if (file_exists($path)) {
                     require_once $path;
@@ -42,6 +47,9 @@
                 }
                 $class = '\Src\Controller\\'.$uri['main'];
                 $Controller = new $class($this->Bootstrap);
+                if (!in_array('Core\Implement\controller', class_implements($Controller, false))) {
+                    throw new \Core\Mexception('Controller does not implement interface');
+                }
                 if (method_exists($Controller, $uri['action'])) {
                     $action = $uri['action'];
                     $Controller->$action($uri);
@@ -49,24 +57,7 @@
                     throw new \Core\Mexception('Unknown action');
                 }
             } catch (\Core\Mexception $E) {
-                $path = \Lib\Helper::buildPath('src/controller/'
-                    . \Config\Controller::DEFAULT_CONTROLLER
-                    . '/'
-                    . \Config\Controller::DEFAULT_CONTROLLER
-                    . '.controller.php');
-                if (file_exists($path)) {
-                    require_once $path;
-                } else {
-                    throw new \Core\Mexception('Unable to load default controller');
-                }
-                $class = '\Src\Controller\\' . \Config\Controller::DEFAULT_CONTROLLER;
-                $Controller = new $class($this->Bootstrap);
-                if (method_exists($Controller, \Config\Controller::DEFAULT_ACTION)) {
-                    $action = \Config\Controller::DEFAULT_ACTION;
-                    $Controller->$action(false);
-                } else {
-                    throw new \Core\Mexception('Unable to execute default action');
-                }
+                $E->quit($E->getMessage());
             }
         }
 

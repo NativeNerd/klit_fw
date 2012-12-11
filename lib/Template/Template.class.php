@@ -77,7 +77,7 @@
          * @throws \Core\Mexception
          */
         public function __construct(\Core\Bootstrap $Bootstrap) {
-            if (($this->dir_templates = Helper::buildPath(\Config\Template::DIR)) !== false) {
+            if (($this->dir_templates = \Lib\Helper::buildPath(\Config\Template::DIR)) !== false) {
                 $this->Bootstrap = $Bootstrap;
                 $this->dir_templates_origin = \Config\Template::DIR;
                 return ;
@@ -96,8 +96,8 @@
             if (file_exists($this->dir_templates.$template)) {
                 $this->tpl_main = $this->dir_templates.$template;
                 return true;
-            } elseif(file_exists(Helper::buildPath($template))) {
-                $this->tpl_main = Helper::buildPath($template);
+            } elseif(file_exists(\Lib\Helper::buildPath($template))) {
+                $this->tpl_main = \Lib\Helper::buildPath($template);
                 return true;
             } else {
                 throw new \Core\Mexception('Unknown template');

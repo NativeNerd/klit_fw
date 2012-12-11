@@ -15,7 +15,6 @@
     class Controller {
         const DEFAULT_CONTROLLER        = 'index';
         const DEFAULT_ACTION            = 'show';
-        const DEFAULT_DO                = '';
 
         const PATH       = 'src/controller/';
     }
