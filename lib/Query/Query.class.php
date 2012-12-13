@@ -37,38 +37,38 @@
          * Containts Database-Object
          * @var object
          */
-        private $sql;
+        protected $Database;
         /**
          * Contains the statement as array
          * @var array
          */
-        private $statement = array();
+        protected $statement = array();
         /**
          * Contains the result object
          * @var object
          */
-        private $result = null;
+        protected $result = null;
         /**
          * Contains the fetched tableinfo
          * @var array
          */
-        private $info = array();
+        protected $info = array();
         /**
          * Contains the already called function
          * @var array
          */
-        private $marker = array();
+        protected $marker = array();
         /**
          * Contains the actual table in the statement
          * @var string
          */
-        private $activeTable = null;
+        protected $activeTable = null;
 
         /**
          * Contains the functions allowed to be called through __call()
          * @var array
          */
-        private $allowedCall = array(
+        protected $allowedCall = array(
             'select',
             'update',
             'delete',
@@ -89,23 +89,23 @@
          * Contains allowed relations in the WHERE-statement
          * @var array
          */
-        private $allowedRelations = array('not', '!', 'or', '||', 'and', '&&', 'XOR');
+        protected $allowedRelations = array('not', '!', 'or', '||', 'and', '&&', 'XOR');
         /**
          * Contains the allowed operators in the WHERE-statement
          * @var array
          */
-        private $allowedOperators = array('=', '<=>', '<>', '!=', '<=', '<', '>=', '>',
+        protected $allowedOperators = array('=', '<=>', '<>', '!=', '<=', '<', '>=', '>',
             'IS', 'IS NOT', 'IS NULL', 'IS NOT NULL');
         /**
          * Contains the allowed orders in the ORDER-statement
          * @var array
          */
-        private $allowedOrder = array('ASC', 'DESC', 'asc', 'desc', 'a', 'd', '<', '>');
+        protected $allowedOrder = array('ASC', 'DESC', 'asc', 'desc', 'a', 'd', '<', '>');
         /**
          * Contains arrays of afterwards callable functions
          * @var array
          */
-        private $allowedAfterward = array(
+        protected $allowedAfterward = array(
             'select' =>
                 array('table'),
             'update' =>
@@ -138,12 +138,7 @@
          * Temporary: Field list
          * @var mixed
          */
-        private $tmp_fields;
-        /**
-         * Temporary: Where information
-         * @var mixed
-         */
-        private $tmp_where;
+        protected $tmp_fields;
 
         /**
          * Initializes the Query class
@@ -156,7 +151,7 @@
          * @throws \Core\Mexception
          */
         public function __construct(\Core\Bootstrap $Bootstrap) {
-            $this->sql = $Bootstrap->getApplication('Database');
+            $this->Database = $Bootstrap->getApplication('Database');
             return ;
         }
 
@@ -202,7 +197,7 @@
          * @return mixed
          * @throws \Core\Mexception
          */
-        public function _ensureByType($value, $type) {
+        protected function _ensureByType($value, $type) {
             try {
                 $matches = array();
                 if (!preg_match('$([a-zA-Z]+)\(([0-9]+)\)$', $type, $matches)) {
@@ -242,8 +237,8 @@
          * @param string $string
          * @return string
          */
-        public function _ensureString($string) {
-            return $this->sql->real_escape_string($string);
+        protected function _ensureString($string) {
+            return $this->Database->real_escape_string($string);
         }
 
         /**
@@ -252,7 +247,7 @@
          * @param int $int
          * @return int
          */
-        public function _ensureInt($int) {
+        protected function _ensureInt($int) {
             return intval($int);
         }
 
@@ -262,7 +257,7 @@
          * @param float $float
          * @return float
          */
-        public function _ensureFloat($float) {
+        protected function _ensureFloat($float) {
             return floatval($float);
         }
 
@@ -272,7 +267,7 @@
          * @param boolean $bool
          * @return boolean
          */
-        public function _ensureBool($bool) {
+        protected function _ensureBool($bool) {
             if ($bool == 1 OR $bool == '1' OR $bool == true) {
                 return true;
             } else {
@@ -286,7 +281,7 @@
          * @param decimal $decimal
          * @return decimal
          */
-        public function _ensureDecimal($decimal) {
+        protected function _ensureDecimal($decimal) {
             return floatval($decimal);
         }
 
@@ -297,7 +292,7 @@
          * @return datetime
          * @throws \Core\Mexception
          */
-        public function _ensureDatetime($date) {
+        protected function _ensureDatetime($date) {
             try {
                 if (is_int(strtotime($date))) {
                     return $date;
@@ -306,6 +301,42 @@
                 }
             } catch (\Core\Mexception $e) {
                 $e->quit($e->getMessage());
+            }
+        }
+
+        /**
+         * Notates $value to go into database
+         * @todo Implement into class Query
+         * @param mixed $value
+         * @param string $type
+         * @return null|string
+         */
+        protected function _notationByType($value, $type) {
+            $matches = array();
+            if (!preg_match('$([a-zA-Z]+)\(([0-9]+)\)$', $type, $matches)) {
+                if (!preg_match('$([a-zA-Z]+)$', $type, $matches)) {
+                    return null;
+                }
+            }
+            switch (strtolower($matches[1])) {
+                case 'varchar' :
+                    return '"'.$value.'"';
+                case 'int' :
+                    return $value;
+                case 'float' :
+                    return $value;
+                case 'bool' :
+                    if ($value) {
+                        return 'TRUE';
+                    } else {
+                        return 'FALSE';
+                    }
+                case 'decimal' :
+                    return $value;
+                case 'datetime' :
+                    return '"'.$value.'"';
+                default :
+                    return null;
             }
         }
 
@@ -326,7 +357,7 @@
          * @param mixed $value
          * @return boolean
          */
-        private function _addElement($type, $value) {
+        protected function _addElement($type, $value) {
             $this->statement[] = array('type'=>$type, 'value'=>$value);
             return true;
         }
@@ -338,8 +369,8 @@
          * @return boolean
          * @throws \Core\Mexception
          */
-        private function _fetchTableinfo($table) {
-            $result = $this->sql->query('SHOW COLUMNS FROM `'.$this->_ensureString($table).'`;');
+        protected function _fetchTableinfo($table) {
+            $result = $this->Database->query('SHOW COLUMNS FROM `'.$this->_ensureString($table).'`;');
             if (!is_object($result)) {
                 throw new \Core\Mexception('Fetch tableinfo of table '.$table.' failed');
             }
@@ -361,7 +392,7 @@
          * @return string
          * @throws \Core\Mexception
          */
-        public function _fetchField($field) {
+        protected function _fetchField($field) {
             if (isset($this->info[$this->activeTable.'_'.$field])) {
                 return $this->activeTable.'_'.$field;
             } else {
@@ -375,7 +406,7 @@
          * @param string $field
          * @return boolean
          */
-        public function _isField($field) {
+        protected function _isField($field) {
             if (isset($this->info[$field])) {
                 return true;
             } else {
@@ -398,7 +429,7 @@
          *
          * @return boolean
          */
-        private function _reset() {
+        protected function _reset() {
             $this->marker = array();
             $this->result = null;
             $this->statement = array();
@@ -411,7 +442,7 @@
          * @param string $function
          * @return boolean
          */
-        private function _setMarker($function) {
+        protected function _setMarker($function) {
             $this->marker[] = $function;
             return true;
         }
@@ -422,7 +453,7 @@
          * @param string $function
          * @return boolean
          */
-        private function _callMarker($function) {
+        protected function _callMarker($function) {
             if (in_array($function, $this->marker)) {
                 return true;
             } else {
@@ -436,7 +467,7 @@
          * @param array $needed
          * @return boolean
          */
-        private function _validateMarker(array $needed) {
+        protected function _validateMarker(array $needed) {
             foreach ($needed AS $value) {
                 if (!in_array($value, $this->marker)) {
                     return false;
@@ -463,7 +494,7 @@
         public function getResult() {
             if (is_object($this->result)) {
                 return $this->result;
-            } elseif ($this->sql->errno == 0) {
+            } elseif ($this->Database->errno == 0) {
                 return true;
             } else {
                 return false;
@@ -476,8 +507,8 @@
          * @return boolean
          */
         public function getError() {
-            if ($this->sql->errno != 0) {
-                return $this->sql->errno;
+            if ($this->Database->errno != 0) {
+                return $this->Database->errno;
             } else {
                 return false;
             }
@@ -499,8 +530,8 @@
          * @return boolean
          */
         public function beginTransaction() {
-            $this->sql->query('START TRANSACTION;');
-            if ($this->sql->errno) {
+            $this->Database->query('START TRANSACTION;');
+            if ($this->Database->errno) {
                 return false;
             }
             return true;
@@ -512,8 +543,8 @@
          * @return boolean
          */
         public function commit() {
-            $this->sql->query('COMMIT;');
-            if ($this->sql->errno != 0) {
+            $this->Database->query('COMMIT;');
+            if ($this->Database->errno != 0) {
                 return false;
             }
             return true;
@@ -526,17 +557,17 @@
          */
         public function rollback($savepoint = null) {
             if ($savepoint == null) {
-                $this->sql->query('ROLLBACK;');
+                $this->Database->query('ROLLBACK;');
             } else {
                 if (!preg_match('/([\w]+)/', $savepoint)) {
                     return false;
                 }
-                $this->sql->query('ROLLBACK TO '.$savepoint.';');
-                if ($this->sql->errno != 0) {
+                $this->Database->query('ROLLBACK TO '.$savepoint.';');
+                if ($this->Database->errno != 0) {
                     return false;
                 }
             }
-            if ($this->sql->errno != 0) {
+            if ($this->Database->errno != 0) {
                 return false;
             }
             return true;
@@ -551,8 +582,8 @@
             if (!preg_match('/([\w]+)/', $name)) {
                 return false;
             }
-            $this->sql->query('SAVEPOINT '.$name);
-            if ($this->sql->errno != 0) {
+            $this->Database->query('SAVEPOINT '.$name);
+            if ($this->Database->errno != 0) {
                 return false;
             }
             return true;
@@ -574,7 +605,7 @@
          *
          * @return boolean
          */
-        private function select() {
+        protected function select() {
             $this->_reset();
             $this->_addElement('type', 'select');
             return true;
@@ -585,7 +616,7 @@
          *
          * @return boolean
          */
-        private function update() {
+        protected function update() {
             $this->_reset();
             $this->_addElement('type', 'update');
             return true;
@@ -596,7 +627,7 @@
          *
          * @return boolean
          */
-        private function delete() {
+        protected function delete() {
             $this->_reset();
             $this->_addElement('type', 'delete');
             return true;
@@ -607,7 +638,7 @@
          *
          * @return boolean
          */
-        private function insert() {
+        protected function insert() {
             $this->_reset();
             $this->_addElement('type', 'insert');
             return true;
@@ -620,7 +651,7 @@
          * @return boolean
          * @throws \Core\Mexception
          */
-        private function join($argv) {
+        protected function join($argv) {
             if (!isset($argv[1])) $argv[1] = 'inner';
             elseif ($argv[1] != 'left' AND $argv[1] != 'right' AND $argv[1] != 'inner')
                 throw new \Core\Mexception('Unknown join condition');
@@ -637,7 +668,7 @@
          * @return boolean
          * @throws \Core\Mexception
          */
-        private function using($argv) {
+        protected function using($argv) {
             if (!isset($this->info[$argv[0]])) {
                 throw new \Core\Mexception('Unknown column');
             } else {
@@ -652,7 +683,7 @@
          * @param array $argv
          * @return boolean
          */
-        private function table($argv) {
+        protected function table($argv) {
             $this->_addElement('table', $argv[0]);
             $this->activeTable = $argv[0];
             // fetch tableinfo
@@ -667,7 +698,7 @@
          * @param array $argv
          * @return boolean
          */
-        private function primary($argv) {
+        protected function primary($argv) {
             $this->_setMarker('fields');
             $this->fields($this->_fetchField('id'));
             $this->where(array($this->_fetchField('id'), '=', $argv[0]));
@@ -680,7 +711,7 @@
          *
          * @param array $argv
          */
-        private function null($argv) {
+        protected function null($argv) {
             $this->_setMarker('fields');
             $this->_addElement('fields',  1);
             return true;
@@ -693,7 +724,7 @@
          * @param array $argv
          * @return boolean
          */
-        private function fields($argv) {
+        protected function fields($argv) {
             if (is_array($argv[0])) {
                 $this->_addElement('fields', $argv[0]);
             } elseif ($argv[0] !== null) {
@@ -710,7 +741,7 @@
          * @param array $argv
          * @return boolean
          */
-        private function values($argv) {
+        protected function values($argv) {
             if (is_array($argv[0])) {
                 $this->_addElement('values', $argv[0]);
             } elseif ($argv !== null) {
@@ -732,7 +763,7 @@
          * @param array $argv
          * @return boolean
          */
-        private function where($argv) {
+        protected function where($argv) {
             //                                       field     operator  condition relation
             // $this->statement[]['where'][] = array($argv[0], $argv[1], $argv[2], $argv[3]);
 
@@ -763,7 +794,7 @@
          * @return boolean
          * @throws \Core\Mexception
          */
-        private function order($argv) {
+        protected function order($argv) {
             if (isset($argv[1])) {
                 if (!in_array($argv[1], $this->allowedOrder) AND !isset($this->info[$argv[0]])) {
                     $this->_addElement('order', array(array($argv[0], $argv[1])));
@@ -790,7 +821,7 @@
          * @param array $argv
          * @return boolean
          */
-        private function limit($argv) {
+        protected function limit($argv) {
             if (!is_int($argv[0]) OR (isset($argv[1]) AND !is_int($argv[1]))) return false;
 
             if (isset($argv[1])) {
@@ -818,7 +849,7 @@
          * @return mixed
          * @throws \Core\Mexception
          */
-        private function execute() {
+        protected function execute() {
             $type = null; $table = null; $fields = null; $values = null; $limit = null; $order = null;
             $join = null; $using = null; $where = null;
             // Parse query
@@ -922,7 +953,7 @@
                 $query = "INSERT INTO $table ($fields) VALUES ($values) ;";
             }
             // Throw query through database and give result back
-            $this->result = $this->sql->query($query);
+            $this->result = $this->Database->query($query);
             return $this->result;
         }
 
@@ -933,7 +964,7 @@
          * @return string
          * @throws \Core\Mexception
          */
-        private function parseType($type) {
+        protected function parseType($type) {
             switch ($type) {
                 case 'select' :
                     return 'SELECT';
@@ -954,7 +985,7 @@
          * @param string $table
          * @return string
          */
-        private function parseTable($table) {
+        protected function parseTable($table) {
             return '`'.$table.'`';
         }
 
@@ -965,7 +996,7 @@
          * @param string $type
          * @return boolean|string
          */
-        private function parseFields($fields, $type) {
+        protected function parseFields($fields, $type) {
             /**
              * Possible values for $fields
              *
@@ -1004,7 +1035,7 @@
          * @return string
          * @throws \Core\Mexception
          */
-        private function parseValues($values, $type) {
+        protected function parseValues($values, $type) {
             if ($type == 'UPDATE') {
                 $return = '';
                 foreach ($this->tmp_fields AS $key=>$value) {
@@ -1012,12 +1043,12 @@
                         throw new \Core\Mexception('Unknown field');
                     if (isset($values[$key])) {
                         if (strlen($return) == 0) {
-                            $return = '`'.$value.'`'.' = '.Helper::db_notationByType(
+                            $return = '`'.$value.'`'.' = '.$this->_notationByType(
                                     $this->_ensureByType(
                                     $values[$key], $this->info[$value]['type']
                                     ), $this->info[$value]['type']);
                         } else {
-                            $return .= ', `'.$value.'`'.' = '.Helper::db_notationByType(
+                            $return .= ', `'.$value.'`'.' = '.$this->_notationByType(
                                     $this->_ensureByType(
                                     $values[$key], $this->info[$value]['type']
                                     ), $this->info[$value]['type']);
@@ -1054,7 +1085,7 @@
          * @return boolean
          * @throws \Core\Mexception
          */
-        private function parseWhere($where) {
+        protected function parseWhere($where) {
             //                                       field     operator  condition relation
             // $this->statement[]['where'][] = array($argv[0], $argv[1], $argv[2], $argv[3]);
 
@@ -1067,7 +1098,7 @@
                         ' '.
                         $where[1].
                         ' '.
-                        Helper::db_notationByType(
+                        $this->_notationByType(
                             $this->_ensureByType($where[2], $this->info[$where[0]]['type']),
                             $this->info[$where[0]]['type']);
             } else {
@@ -1080,7 +1111,7 @@
                         ' '.
                         $where[1].
                         ' '.
-                        Helper::db_notationByType(
+                        $this->_notationByType(
                             $this->_ensureByType($where[2], $this->info[$where[0]]['type']),
                             $this->info[$where[0]]['type']);
             }
@@ -1092,7 +1123,7 @@
          * @param array $order
          * @return string
          */
-        private function parseOrder($order) {
+        protected function parseOrder($order) {
             $return = '';
             foreach ($order AS $value) {
                 if ($value[1] == 'a' OR $value[1] == '<') $value[1] = 'ASC';
@@ -1112,7 +1143,7 @@
          * @param array|string $limit
          * @return string
          */
-        private function parseLimit($limit) {
+        protected function parseLimit($limit) {
             if (is_array($limit)) {
                 return 'LIMIT '.$limit[0].','.$limit[1];
             } else {
@@ -1126,7 +1157,7 @@
          * @param array $value
          * @return string
          */
-        private function parseJoin($value) {
+        protected function parseJoin($value) {
             return (strtoupper($value['type']).' JOIN `'.$value['table'].'`');
         }
 
@@ -1135,7 +1166,7 @@
          * @param string $using
          * @return string
          */
-        private function parseUsing($using) {
+        protected function parseUsing($using) {
             return ('USING(`'.$using.'`)');
         }
     }

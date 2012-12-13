@@ -1,5 +1,5 @@
 <?php
-
+    namespace Core;
     /**
      * [Controller.class.php]
      * @version 1.0.0
@@ -13,9 +13,9 @@
      *              1.0.0   -
      *
      */
-    namespace Core;
     class Controller {
-        private $Bootstrap;
+        protected $Bootstrap;
+        protected $Path;
 
         /**
          * Initializes the class
@@ -24,6 +24,7 @@
         public function __construct(\Core\Bootstrap $Bootstrap) {
             $this->Bootstrap = $Bootstrap;
             $this->Bootstrap->openApplication($this, 'Controller');
+            $this->Path = $this->Bootstrap->getApplication('Path');
             require_once 'interface/controller.interface.php';
         }
 
@@ -33,13 +34,12 @@
          */
         public function run() {
             try {
-                $uri = \Lib\Helper::parseUri();
+                $uri = $this->Path->parseUri();
                 if (!$uri) {
                     $uri['main'] = \Config\Controller::DEFAULT_CONTROLLER;
                     $uri['action'] = \Config\Controller::DEFAULT_ACTION;
-                    $uri['do'] = \Config\Controller::DEFAULT_DO;
                 }
-                $path = \Lib\Helper::buildPath('src/controller/'.$uri['main'].'/'.$uri['main'].'.controller.php');
+                $path = $this->Path->buildPath('src/controller/'.$uri['main'].'/'.$uri['main'].'.controller.php');
                 if (file_exists($path)) {
                     require_once $path;
                 } else {

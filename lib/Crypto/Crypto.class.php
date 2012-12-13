@@ -1,4 +1,5 @@
 <?php
+    namespace Lib;
     /**
      * [Crypto.class.php]
      * @version 1.0.0
@@ -12,7 +13,6 @@
      *
      *
      */
-    namespace Lib;
     final class Crypto {
         protected $keyDir = 'keys';
         protected $cipher;

@@ -1,4 +1,5 @@
 <?php
+    namespace Lib;
     /**
      * [FormNew.class.php]
      * @name FormNew.class.php
@@ -25,7 +26,6 @@
      *      - Ob jedes Feld gesendet wurde
      *      - Ob jedes Feld korrekte eingaben enthält
      */
-    namespace Lib;
     class Form {
         private $Bootstrap;
         private $Template;

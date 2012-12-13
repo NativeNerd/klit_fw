@@ -1,4 +1,5 @@
 <?php
+    namespace Src\Controller;
     /**
      * [index.controller.php]
      * @version 1.0.0
@@ -12,7 +13,6 @@
      *              1.0.0   -
      *
      */
-    namespace Src\Controller;
     class index implements \Core\Implement\controller {
         private $Bootstrap;
         private $Query;

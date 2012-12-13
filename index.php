@@ -20,6 +20,7 @@
     $Bootstrap->registerApplication('Template', 'Template', '\Lib');
     $Bootstrap->registerApplication('Session', 'Session', '\Lib');
     $Bootstrap->registerApplication('Crypto', 'Crypto', '\Lib');
+    $Bootstrap->registerApplication('Path', 'Path', '\Lib');
 
     $Controller = new Core\Controller($Bootstrap);
     $Controller->run();

@@ -24,6 +24,7 @@
          * @param boolean $error
          * @return string|boolean
          * @throws \Core\Mexception
+         * @deprecated Path::buildPath()
          */
         final static public function buildPath($path, $_unused = null, $_unused2 = null, $error = true) {
             if (substr($path, 0, 2) == '..') {
@@ -78,6 +79,7 @@
         /**
          * Parses an URI
          * @return array|boolean
+         * @deprecated Path::parseUri()
          */
         final static public function parseUri() {
             if (strlen($_SERVER['QUERY_STRING']) > 0) {
@@ -115,7 +117,7 @@
 
         /**
          * Notates $value like a given type, database compatible
-         * @todo Implement into class Query
+         * @deprecated Query::_notationByType()
          * @param mixed $value
          * @param string $type
          * @return null|string

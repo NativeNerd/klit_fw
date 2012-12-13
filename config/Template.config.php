@@ -1,5 +1,5 @@
 <?php
-
+    namespace Config;
     /**
      * [Template.config.php]
      * @version 1.0.0
@@ -11,9 +11,6 @@
      *              1.0.0   -
      *
      */
-
-    namespace Config;
-
     class Template {
         // User defined const
         const DIR               = 'media/tpl/de/';

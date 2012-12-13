@@ -1,4 +1,5 @@
 <?php
+    namespace Lib;
     /**
      * [Session.class.php]
      * @name Session.class.php
@@ -13,7 +14,6 @@
      *              1.0.0   -
      *
      */
-    namespace Lib;
     class Session {
         private $Bootstrap;
         private $Id;

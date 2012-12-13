@@ -1,4 +1,5 @@
 <?php
+    namespace Core;
     /**
      * [Bootstrap.class.php]
      * @version 1.0.0
@@ -12,9 +13,8 @@
      *              1.0.0   -
      *
     */
-    namespace Core;
     class Bootstrap {
-        private $registered;
+        protected $registered;
 
         /**
          * Registers an application, if application will be called, instance will be opened automatically

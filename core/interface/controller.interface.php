@@ -1,5 +1,5 @@
 <?php
-
+    namespace Core\Implement;
     /**
      * [controller.interface.php]
      * @version 1.0.0
@@ -13,7 +13,6 @@
      *              1.0.0   -
      *
      */
-    namespace Core\Implement;
     interface controller {
         public function __construct(\Core\Bootstrap $Bootstrap);
         public function fallback();

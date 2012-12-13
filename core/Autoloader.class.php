@@ -1,5 +1,5 @@
 <?php
-
+    namespace Core;
     /**
      * [Autoloader.class.php]
      * @version 1.0.0

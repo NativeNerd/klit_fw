@@ -1,4 +1,5 @@
 <?php
+    namespace Lib;
     /**
      * [MySQL.class.php]
      * @version 3.0.1
@@ -19,7 +20,6 @@
      *          3.0.1   Error-Handling verbessert, Fehlernummer wird nun auch genutzt und behandelt
      *
      */
-    namespace Lib;
     class MySQL extends \mysqli {
         /**
          * Contains the Bootstrap object

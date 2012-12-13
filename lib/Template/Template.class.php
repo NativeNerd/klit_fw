@@ -1,4 +1,5 @@
 <?php
+    namespace Lib;
     /**
      * [Template.class.php]
      * @version 1.0.0
@@ -22,7 +23,6 @@
      *  $:variable      declared    Only in the own file
      *
      */
-    namespace Lib;
     class Template {
         /**
          * Contains the Bootstrap

@@ -1,5 +1,5 @@
 <?php
-
+    namespace Config;
     /**
      * [Constant.config.php]
      * @version 1.0.0
@@ -11,9 +11,6 @@
      *              1.0.0   -
      *
      */
-
-    namespace Config;
-
     class Constant {
         const MEXCEPTION_ELEVEL     = 7;
         const MEXCEPTION_EDOC       = 'core/error.html';
