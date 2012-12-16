@@ -23,47 +23,44 @@
      *  $:variable      declared    Only in the own file
      *
      */
-    class Template {
-        /**
-         * Contains the Bootstrap
-         * @var object
-         */
-        private $Bootstrap;
+    class Template implements \Core\Implement\lib {
+        protected static $_instance = null;
+        protected static $Bootstrap = null;
         /**
          * Contains the origin given template dir
          * @var string
          */
-        private $dir_templates_origin;
+        protected $dir_templates_origin;
         /**
          * Contains the parsed dir
          * @var string
          */
-        private $dir_templates;
+        protected $dir_templates;
         /**
          * Contains main template content
          * @var string
          */
-        private $tpl_main;
+        protected $tpl_main;
         /**
          * Contains template variables
          * @var array
          */
-        private $tpl_vars = array('internal' => array(), 'assigned' => array(), 'declared' => array());
+        protected $tpl_vars = array('internal' => array(), 'assigned' => array(), 'declared' => array());
         /**
          * Contains all templates
          * @var array
          */
-        private $tpl_contents = array();
+        protected $tpl_contents = array();
         /**
          * Contains allowed if-Relations
          * @var array
          */
-        private $allowedRelationsIf = array('<=', '>=', '==');
+        protected $allowedRelationsIf = array('<=', '>=', '==');
         /**
          * Contains a list of allowed functions
          * @var array
          */
-        private $allowedFunctionsIf = array('is_numeric');
+        protected $allowedFunctionsIf = array('is_numeric');
         /**
          * This string is given back if a variable is not assigned
          * @var string
@@ -76,14 +73,23 @@
          * @return null
          * @throws \Core\Mexception
          */
-        public function __construct(\Core\Bootstrap $Bootstrap) {
+        public function __construct() {
             if (($this->dir_templates = \Lib\Helper::buildPath(\Config\Template::DIR)) !== false) {
-                $this->Bootstrap = $Bootstrap;
                 $this->dir_templates_origin = \Config\Template::DIR;
                 return ;
             } else {
                 throw new \Core\Mexception('Unknown directory given');
             }
+        }
+
+        public static function getInstance(\Core\Bootstrap $Bootstrap = null) {
+            if ($Bootstrap !== null) {
+                static::$Bootstrap = $Bootstrap;
+            }
+            if (static::$_instance === null) {
+                static::$_instance = new static();
+            }
+            return static::$_instance;
         }
 
         /**
@@ -124,7 +130,7 @@
          * @return boolean
          * @throws \Core\Mexception
          */
-        private function assignWithScope($name, $value, $scope = 'assigned') {
+        protected function assignWithScope($name, $value, $scope = 'assigned') {
             if ($scope !== 'assigned' AND $scope != 'declared' AND $scope != 'internal') {
                 throw new \Core\Mexception('Unknown variable scope');
             } else {
@@ -140,7 +146,7 @@
          * @return mixed
          * @throws \Core\Mexception
          */
-        private function getVariable($name, $scope = 'assigned') {
+        protected function getVariable($name, $scope = 'assigned') {
             if ($scope == -1) {
                 if (substr($name, 0, 1) == '.') {
                     $scope = 'internal';
@@ -190,7 +196,7 @@
              * 5. Parse the file
              * 6. Return the content
              */
-            $object = new Template($this->Bootstrap, $this->dir_templates_origin);
+            $object = new \Lib\Template();
             $object->return_unsetValue = '';
             $object->open($file);
             $object->tpl_vars = $this->tpl_vars;
@@ -287,7 +293,7 @@
          * @param array $match
          * @return string
          */
-        private function parseIgnore($match) {
+        protected function parseIgnore($match) {
             /**
              * The match array arrives as followed:
              *
@@ -302,7 +308,7 @@
          * @param array $match
          * @return null
          */
-        private function parseDeclare($match) {
+        protected function parseDeclare($match) {
             /**
              * The match array arrives as followed:
              *
@@ -322,7 +328,7 @@
          * @param array $match
          * @return string
          */
-        private function parseVariables($match) {
+        protected function parseVariables($match) {
             /**
              * The match array arrives as followed:
              *
@@ -353,7 +359,7 @@
          * @return string
          * @throws \Core\Mexception
          */
-        private function parseInclude($include) {
+        protected function parseInclude($include) {
             $include = $include[1];
             if (is_file($this->dir_templates.$include)) {
                 /**
@@ -362,7 +368,7 @@
                  *
                  * But it could be a step into future
                  */
-                $object = new Template($this->Bootstrap, $this->dir_templates_origin);
+                $object = new \Lib\Template();
                 $object->open($include);
                 $object->tpl_vars = $this->tpl_vars;
                 $return = $object->parse();
@@ -379,7 +385,7 @@
          * @return string
          * @throws \Core\Mexception
          */
-        private function parseIfelse($match) {
+        protected function parseIfelse($match) {
             /**
              * Parsing If-Else is really hard... So here's the array given by the regex
              *
@@ -462,7 +468,7 @@
          * @param array $match
          * @return string
          */
-        private function parseForeach($match) {
+        protected function parseForeach($match) {
             /**
              * The match array arrives as followed
              *
@@ -490,7 +496,7 @@
          * @param array $match
          * @return string
          */
-        private function parseForm($match) {
+        protected function parseForm($match) {
             /**
              * The match array arrives as followed
              *
@@ -506,7 +512,7 @@
              *  2. (ignore)
              *  3. (ignore)
              */
-            if (($Form = $this->Bootstrap->getApplication('Form')) === false) {
+            if (($Form = Form::getInstance()) === false) {
                 return null;
             }
             if (isset($match[5])) {
@@ -521,7 +527,7 @@
          * @param array $match
          * @return string
          */
-        private function parseLabel($match) {
+        protected function parseLabel($match) {
             /**
              * The match array arrives as followed
              *
@@ -539,7 +545,7 @@
              *  4. (ignore)
              *  5. (ignore)
              */
-            if (($Form = $this->Bootstrap->getApplication('Form')) === false) {
+            if (($Form = Form::getInstance()) === false) {
                 return null;
             }
             if (isset($match[5])) {
@@ -555,8 +561,12 @@
          * @param mixed $value
          * @return true
          */
-        private function _is_numeric($value) {
+        protected function _is_numeric($value) {
             return is_numeric($value);
+        }
+
+        public function __destruct() {
+
         }
     }
 ?>

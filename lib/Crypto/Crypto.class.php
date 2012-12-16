@@ -13,7 +13,9 @@
      *
      *
      */
-    final class Crypto {
+    class Crypto implements \Core\Implement\lib {
+        protected static $_instance = null;
+        protected static $Bootstrap = null;
         protected $keyDir = 'keys';
         protected $cipher;
         protected $mode;
@@ -42,6 +44,16 @@
                 throw new Mexception('Class Helper not found');
             $this->keyDir = Helper::buildPath($this->keyDir);
             return true;
+        }
+
+        public static function getInstance(\Core\Bootstrap $Bootstrap = null) {
+            if ($Bootstrap !== null) {
+                static::$Bootstrap = $Bootstrap;
+            }
+            if (static::$_instance === null) {
+                static::$_instance = new static();
+            }
+            return static::$_instance;
         }
 
         /**
@@ -146,6 +158,10 @@
                 return mcrypt_decrypt($this->cipher, $this->key, $encryptedText, $this->mode, $this->iv);
             } else
                 throw new Mexception('Not allowed');
+        }
+
+        public function __destruct() {
+
         }
     }
 ?>

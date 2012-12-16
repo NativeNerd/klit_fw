@@ -13,11 +13,23 @@
      *              1.0.0   -
      *
      */
-    class Path {
+    class Path implements \Core\Implement\lib {
+        protected static $_instance = null;
+        protected static $Bootstrap = null;
         protected $param;
 
         public function __construct() {
 
+        }
+
+        public static function getInstance(\Core\Bootstrap $Bootstrap = null) {
+            if ($Bootstrap !== null) {
+                static::$Bootstrap = $Bootstrap;
+            }
+            if (static::$_instance === null) {
+                static::$_instance = new static();
+            }
+            return static::$_instance;
         }
 
         // adds a param to the uri
@@ -109,7 +121,7 @@
                 return $wholePath;
         }
 
-        public function __desctruct() {
+        public function __destruct() {
 
         }
 

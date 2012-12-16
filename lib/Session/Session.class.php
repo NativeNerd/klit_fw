@@ -14,19 +14,29 @@
      *              1.0.0   -
      *
      */
-    class Session {
-        private $Bootstrap;
-        private $Id;
-        private $savePath;
+    class Session implements \Core\Implement\lib {
+        protected static $_instance = null;
+        protected static $Bootstrap = null;
+        protected $Id;
+        protected $savePath;
 
         /**
          * Initializes a Session
          * @param Model $Model
          */
-        public function __construct(\Core\Bootstrap $Bootstrap) {
+        public function __construct() {
             session_start();
             $this->Id = session_id();
-            $this->Bootstrap = $Bootstrap;
+        }
+
+        public static function getInstance(\Core\Bootstrap $Bootstrap = null) {
+            if ($Bootstrap !== null) {
+                static::$Bootstrap = $Bootstrap;
+            }
+            if (static::$_instance === null) {
+                static::$_instance = new static();
+            }
+            return static::$_instance;
         }
 
         /**

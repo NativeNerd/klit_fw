@@ -32,7 +32,9 @@
      *      - Der Benutzer kann direkt mit $Model->getResult()->fetch_assoc() die Daten verarbeiten
      */
     namespace Lib;
-    class Query {
+    class Query implements \Core\Implement\lib {
+        protected static $_instance = null;
+        protected static $Bootstrap = null;
         /**
          * Containts Database-Object
          * @var object
@@ -150,8 +152,22 @@
          * @return (null)
          * @throws \Core\Mexception
          */
-        public function __construct(\Core\Bootstrap $Bootstrap) {
-            $this->Database = $Bootstrap->getApplication('Database');
+        public function __construct() {
+            $this->Database = new \Lib\MySQL;
+            return ;
+        }
+
+        public static function getInstance(\Core\Bootstrap $Bootstrap = null) {
+            if ($Bootstrap !== null) {
+                static::$Bootstrap = $Bootstrap;
+            }
+            if (static::$_instance === null) {
+                static::$_instance = new static();
+            }
+            return static::$_instance;
+        }
+
+        public function __destruct() {
             return ;
         }
 

@@ -5,7 +5,6 @@
 
 ### Priority B
 * Organize Bootstrap and Autoloader
-* implement Late static binding
 * implement .json files to declare lib, required lib & co
 
 ### Priority C

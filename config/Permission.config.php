@@ -1,22 +1,18 @@
 <?php
-    namespace Core\Implement;
+    namespace Config;
     /**
-     * [controller.interface.php]
+     * [Permission.config.php]
      * @version 1.0.0
      * @author Christian Klauenbösch
      * @copyright Klauenbösch IT Services
      * @link http://www.klit.ch
      *
-     * @desc Was it does
-     *
      * previous     now     what changed
      *              1.0.0   -
      *
      */
-    interface controller {
-        public function __construct();
-        public function fallback();
-        public function __desctruct();
+    class Permission {
+        const DIR   = 'src/permission/';
     }
 
 ?>

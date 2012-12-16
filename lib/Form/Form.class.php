@@ -26,24 +26,34 @@
      *      - Ob jedes Feld gesendet wurde
      *      - Ob jedes Feld korrekte eingaben enthält
      */
-    class Form {
-        private $Bootstrap;
-        private $Template;
-        private $form;
-        private $allowedInputs = array(
+    class Form implements \Core\Implement\lib {
+        protected static $_instance = null;
+        protected static $Bootstrap = null;
+        protected $Template;
+        protected $form;
+        protected $allowedInputs = array(
             'text',
             'hidden',
             'checkbox',
             'radio',
             'submit'
             );
-        private $formId = null;
+        protected $formId = null;
 
-        public function __construct(\Core\Bootstrap $Bootstrap) {
-            $this->Bootstrap = $Bootstrap;
-            $this->Template = $this->Bootstrap->getApplication('Template');
-            $this->Session = $this->Bootstrap->getApplication('Session');
+        public function __construct() {
+            $this->Template = \Lib\Template::getInstance();
+            $this->Session = \Lib\Session::getInstance();
             return ;
+        }
+
+        public static function getInstance(\Core\Bootstrap $Bootstrap = null) {
+            if ($Bootstrap !== null) {
+                static::$Bootstrap = $Bootstrap;
+            }
+            if (static::$_instance === null) {
+                static::$_instance = new static();
+            }
+            return static::$_instance;
         }
 
         public function openForm($identifier = null, $action = 'index.php', $method = 'POST') {
@@ -345,7 +355,7 @@
             }
         }
 
-        public function __desctruct() {
+        public function __destruct() {
 
         }
 

@@ -15,7 +15,28 @@
      *
      */
     namespace Lib;
-    final class Helper {
+    class Helper implements \Core\Implement\lib {
+        protected static $_instance = null;
+        protected static $Bootstrap = null;
+
+        public function __construct() {
+
+        }
+
+        public static function getInstance(\Core\Bootstrap $Bootstrap = null) {
+            if ($Bootstrap !== null) {
+                static::$Bootstrap = $Bootstrap;
+            }
+            if (static::$_instance === null) {
+                static::$_instance = new static();
+            }
+            return static::$_instance;
+        }
+
+        public function __destruct() {
+
+        }
+
         /**
          * Builds an absolute path
          * @param string $path

@@ -21,11 +21,8 @@
          * Initializes the class
          * @param \Core\Bootstrap $Bootstrap
          */
-        public function __construct(\Core\Bootstrap $Bootstrap) {
-            $this->Bootstrap = $Bootstrap;
-            $this->Bootstrap->openApplication($this, 'Controller');
-            $this->Path = $this->Bootstrap->getApplication('Path');
-            require_once 'interface/controller.interface.php';
+        public function __construct() {
+            $this->Path = \Lib\Path::getInstance();
         }
 
         /**

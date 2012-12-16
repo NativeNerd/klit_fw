@@ -14,19 +14,21 @@
      *
      */
     class index implements \Core\Implement\controller {
-        private $Bootstrap;
-        private $Query;
-        private $Template;
+        protected $Query;
+        protected $Template;
+        protected $Permission;
 
-        public function __construct(\Core\Bootstrap $Bootstrap) {
-            $this->Bootstrap = $Bootstrap;
-            $this->Query = $this->Bootstrap->getApplication('Query');
-            $this->Template = $this->Bootstrap->getApplication('Template');
+        public function __construct() {
+            $this->Query = \Lib\Query::getInstance();
+            $this->Template = \Lib\Template::getInstance();
+            $this->Permission = \Lib\Permission::getInstance();
             return ;
         }
 
         public function show($uri) {
             var_dump($uri);
+            $this->Permission->import('root.group');
+            $this->Permission->export();
             $this->Template->open('index/index.tpl');
             $this->Template->show();
         }

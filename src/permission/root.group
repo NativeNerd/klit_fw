@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<permission>
+    <group name="root">
+        <list>
+            <category name="entry">
+                <item name="editEntry" value="1" />
+                <item name="moveEntry" value="1" />
+                <item name="deleteEntry" value="1" />
+                <item name="closeEntry" value="1" />
+            </category>
+            <category name="thread">
+                <item name="editThread" value="1" />
+                <item name="moveThread" value="1" />
+                <item name="closeThread" value="1" />
+                <item name="deleteThread" value="1" />
+            </category>
+        </list>
+    </group>
+    <group name="admin">
+        <list>
+            <category name="entry">
+                <item name="editEntry" value="1" />
+                <item name="moveEntry" value="1" />
+                <item name="deleteEntry" value="1" />
+                <item name="closeEntry" value="1" />
+            </category>
+            <category name="thread">
+                <item name="editThread" value="1" />
+                <item name="moveThread" value="1" />
+                <item name="closeThread" value="1" />
+                <item name="deleteThread" value="1" />
+            </category>
+        </list>
+    </group>
+    <group name="mod">
+        <list>
+            <category name="entry">
+                <item name="editEntry" value="1" />
+                <item name="moveEntry" value="1" />
+                <item name="deleteEntry" value="1" />
+                <item name="closeEntry" value="1" />
+            </category>
+            <category name="thread">
+                <item name="editThread" value="1" />
+                <item name="moveThread" value="1" />
+                <item name="closeThread" value="1" />
+                <item name="deleteThread" value="1" />
+            </category>
+        </list>
+    </group>
+    <group name="user">
+        <list>
+            <category name="entry">
+                <item name="editEntry" value="1" />
+                <item name="moveEntry" value="1" />
+                <item name="deleteEntry" value="1" />
+                <item name="closeEntry" value="1" />
+            </category>
+            <category name="thread">
+                <item name="editThread" value="1" />
+                <item name="moveThread" value="0" />
+                <item name="closeThread" value="1" />
+                <item name="deleteThread" value="1" />
+            </category>
+        </list>
+    </group>
+</permission>
