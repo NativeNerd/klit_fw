@@ -14,10 +14,12 @@
     class Permission implements \Core\Implement\lib {
         protected static $_instance = null;
         protected static $Bootstrap = null;
-        protected $Path;
-        protected $table;
-        protected $permission = 0x00000000;
-        protected $key = 0x0000000;
+
+        protected $lawTable;
+        protected $ruleTable;
+        protected $permissionTable;
+
+        protected $activeGroups;
 
         public function __construct() {
             $this->Path = \Lib\Path::getInstance();
@@ -34,67 +36,103 @@
             return static::$_instance;
         }
 
-        public function addGroup($groupName) {
-            $this->table[$groupName] = array();
+        public function assignGroup($groupName) {
+            if (isset($this->lawTable[$groupName])) {
+                $this->activeGroups[$this->lawTable[$groupName]] = $groupName;
+                return true;
+            }
+            return false;
         }
 
-        public function addPermission($groupName, $categoryName, $permission, $value) {
-            $this->table[$groupName][$categoryName][$permission] = ($value) ? 1 : 0;
+        public function setGroup($groupName, $level) {
+            $this->lawTable[$groupName] = (int) $level;
         }
 
-        public function setPermission() {
-
+        public function setRule($groupName, $catName, $itemName, $value) {
+            $this->ruleTable[$groupName][$catName][$itemName] = ($value) ? true : false;
         }
 
-        public function hasPermission() {
-
+        public function setPermission($groupName, $catName, $itemName, $value) {
+            $this->permissionTable[$groupName][$catName][$itemName] = ($value) ? true : false;
         }
 
-        protected function keyUp() {
-            $key = hexdec($this->key);
-            $key += 1;
-            $this->key = dechex($key);
-            return true;
+        public function has($catName, $itemName = null) {
+            if (strstr($catName, ':')) {
+                $explode = explode(':', $catName, 2);
+                $catName = $explode[0];
+                $itemName = $explode[1];
+            }
+            /**
+             * Vorgehensweise:
+             * 1. Prüfe auf Rule mit to=*
+             * 2. Prüfe auf Rule mit to=$groupName (level aufsteigend)
+             * 3. Prüfe auf Permission mit to=$groupName (level aufsteigend)
+             */
+            if (isset($this->ruleTable['*'][$catName][$itemName])) {
+                return $this->ruleTable['*'][$catName][$itemName];
+            }
+            foreach ($this->activeGroups AS $groupName) {
+                if (isset($this->ruleTable[$groupName][$catName][$itemName])) {
+                    return $this->ruleTable[$groupName][$catName][$itemName];
+                }
+            }
+            foreach ($this->activeGroups AS $groupName) {
+                if (isset($this->permissionTable[$groupName][$catName][$itemName])) {
+                    return $this->permissionTable[$groupName][$catName][$itemName];
+                }
+            }
+            return false;
         }
 
-        public function import($groupName) {
-            if (($path = $this->Path->buildPath(\Config\Permission::DIR . $groupName)) !== false) {
-                $xml = new \SimpleXMLElement($path, null, true);
-                foreach ($xml->group AS $group) {
-                    $groupName = (string) $group['name'];
-                    $this->addGroup($groupName);
-                    foreach ($group->list->category AS $cat) {
+        /**
+         * Imports a *.law-File, creates automatically all IDs if needed and writes down the file
+         *
+         * @param file $law
+         * @return boolean
+         * @throws \Core\Mexception
+         */
+        public function useLaw($law) {
+            if (($path = $this->Path->buildPath(\Config\Permission::DIR . $law)) !== false) {
+                $law = new \SimpleXMLElement($path, null, true);
+                foreach ($law->groups AS $groups) {
+                    $groupName = (string) $groups->group['name'];
+                    $groupLevel = (int) $groups->group['level'];
+                    $this->setGroup($groupName, $groupLevel);
+                }
+                foreach ($law->rules AS $rules) {
+                    $rulesTo = (string) $rules['to'];
+                    foreach ($rules->category AS $cat) {
                         $catName = (string) $cat['name'];
                         foreach ($cat->item AS $item) {
                             $itemName = (string) $item['name'];
                             $itemValue = (int) $item['value'];
-                            $this->addPermission($groupName,
-                                $catName,
-                                $itemName,
-                                $itemValue);
+                            $this->setRule($rulesTo, $catName, $itemName, $itemValue);
+                        }
+                    }
+                }
+                return true;
+            }
+        }
+
+        /**
+         * Imports a *.group-File
+         * @param type $groupName
+         */
+        public function useGroup($groupName) {
+            if (($path = $this->Path->buildPath(\Config\Permission::DIR . $groupName)) !== false) {
+                $xml = new \SimpleXMLElement($path, null, true);
+                foreach ($xml->group AS $group) {
+                    $groupName = (string) $group['name'];
+                    foreach ($group->category AS $cat) {
+                        $catName = (string) $cat['name'];
+                        foreach ($cat->item AS $item) {
+                            $itemName = (string) $item['name'];
+                            $itemValue = (int) $item['value'];
+                            $this->setPermission($groupName, $catName, $itemName, $itemValue);
                         }
                     }
                 }
             }
-        }
-
-        public function export() {
-            $csv = array();
-            foreach ($this->table AS $groupName=>$group) {
-                foreach ($group AS $catName=>$cat) {
-                    foreach ($cat AS $itemName=>$item) {
-                        $this->keyUp();
-                        $csv[] = implode(';',
-                            array($this->key,
-                                $groupName,
-                                $catName,
-                                $itemName,
-                                $item."\n")
-                            );
-                    }
-                }
-            }
-            var_dump(file_put_contents($this->Path->buildPath(\Config\Permission::DIR.'root.import', false), $csv));
         }
 
         public function __destruct() {

@@ -26,9 +26,9 @@
         }
 
         public function show($uri) {
-            var_dump($uri);
-            $this->Permission->import('root.group');
-            $this->Permission->export();
+            $this->Permission->useLaw('main.law');
+            $this->Permission->useGroup('root.group');
+            $this->Permission->assignGroup('root');
             $this->Template->open('index/index.tpl');
             $this->Template->show();
         }
