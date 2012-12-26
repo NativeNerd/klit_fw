@@ -26,5 +26,9 @@
         const PATH_TRAIT            = 'core/trait/';
         const PATH_CSS              = 'media/css/';
         const PATH_JS               = 'media/js/';
+
+        const FILE_COREEXT          = '.class.php';
+        const FILE_LIBEXT           = '.class.php';
+        const FILE_CONFIGEXT        = '.config.php';
     }
 ?>

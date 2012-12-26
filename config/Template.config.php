@@ -30,6 +30,7 @@
         const REGEXP_FORM       = '/\{form \(([\w:]+)\)([\s]*)((\(([\w]+)\))|)\}/';
         const REGEXP_LABEL      = '/\{label \(([\w:]+)\)([\s]*)((\(([\w]+)\))|)\}/';
         const REGEXP_FOREACH    = '/\{foreach \(([\$\w\.:]+)\)\}(.+?)\{\/foreach\}/s';
+        const UNDEFINIED_VAR    = '(null)';
     }
 
 ?>

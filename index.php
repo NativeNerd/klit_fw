@@ -21,6 +21,8 @@
     require_once 'lib/Database/MySQL.class.php';
     require_once 'lib/Template/Template.class.php';
     require_once 'lib/Helper/Helper.class.php';
+    require_once 'lib/Form/Form.class.php';
+    require_once 'lib/Session/Session.class.php';
 
     $Controller = new Core\Controller();
     $Controller->run();

@@ -50,6 +50,8 @@
                 if (method_exists($Controller, $uri['action'])) {
                     $action = $uri['action'];
                     $Controller->$action($uri);
+                } elseif (method_exists($Controller, 'fallback')) {
+                    $Controller->fallback($uri);
                 } else {
                     throw new \Core\Mexception('Unknown action');
                 }

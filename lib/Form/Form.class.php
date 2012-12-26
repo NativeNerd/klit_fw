@@ -36,7 +36,8 @@
             'hidden',
             'checkbox',
             'radio',
-            'submit'
+            'submit',
+            'password'
             );
         protected $formId = null;
 
@@ -142,12 +143,12 @@
                     } else {
                         if (isset($this->form[$this->formId]['regex'][$name])) {
                             if (!preg_match($this->form[$this->formId]['regex'][$name], $_POST[$name])) {
-                                $return['wrong'][] = $name;
+                                $return['false'][] = $name;
                             } else {
-                                $return['ok'][] = $name;
+                                $return['true'][] = $name;
                             }
                         } else {
-                            $return['ok'][] = $name;
+                            $return['true'][] = $name;
                         }
                     }
                 }

@@ -1,5 +1,14 @@
 {include (_master/header.tpl)}
 
-Index
+<h1>Testformular</h1>
+
+{$error}<br />
+<br />
+{form (:header)}
+{label (username)} {form (username)}<br />
+{label (password)} {form (password)}<br />
+{label (age)} {form (age)}<br />
+{form (submit)}
+{form (:footer)}
 
 {include (_master/footer.tpl)}

@@ -61,11 +61,6 @@
          * @var array
          */
         protected $allowedFunctionsIf = array('is_numeric');
-        /**
-         * This string is given back if a variable is not assigned
-         * @var string
-         */
-        public $return_unsetValue = '(null)';
 
         /**
          * Initializes the class
@@ -197,7 +192,6 @@
              * 6. Return the content
              */
             $object = new \Lib\Template();
-            $object->return_unsetValue = '';
             $object->open($file);
             $object->tpl_vars = $this->tpl_vars;
             foreach ($assign AS $key=>$value) {
@@ -347,7 +341,7 @@
             }
 
             if ($return === null) {
-                return $this->return_unsetValue;
+                return \Config\Template::UNDEFINIED_VAR;
             } else {
                 return $return;
             }
