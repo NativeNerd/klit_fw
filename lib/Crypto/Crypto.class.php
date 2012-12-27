@@ -125,7 +125,7 @@
          * @param string $filename
          * @throws Mexception
          */
-        public function setKeyByFile($id) {
+        public function setKeyByFile($filename) {
             if (!file_exists($this->keyDir.$filename))
                 throw new Mexception('Key does not exist any more');
             $this->key = file_get_contents($this->keyDir.$filename);

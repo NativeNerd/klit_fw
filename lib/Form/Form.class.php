@@ -59,7 +59,11 @@
 
         public function openForm($identifier = null, $action = 'index.php', $method = 'POST') {
             if ($identifier == null) {
-                $identifier = rand(1000, 5000);
+                do {
+                    $identifier = rand(1000, 5000);
+                } while(isset($this->form[$identifier]));
+            } elseif (isset($this->form[$identifier])) {
+                return false;
             }
             $identifier = substr(sha1($identifier), 0, 6);
             if ($method == 'POST') {
@@ -148,7 +152,7 @@
                                 $return['true'][] = $name;
                             }
                         } else {
-                            $return['true'][] = $name;
+                            $return['unchecked'][] = $name;
                         }
                     }
                 }
