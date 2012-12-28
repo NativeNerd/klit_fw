@@ -40,6 +40,8 @@
             'password'
             );
         protected $formId = null;
+        protected $formName = null;
+        protected $parsed = null;
 
         public function __construct() {
             $this->Template = \Lib\Template::getInstance();
@@ -65,6 +67,7 @@
             } elseif (isset($this->form[$identifier])) {
                 return false;
             }
+            $this->formName = $identifier;
             $identifier = substr(sha1($identifier), 0, 6);
             if ($method == 'POST') {
                 $this->form[$identifier]['method'] = 'POST';
@@ -93,7 +96,7 @@
             }
         }
 
-        public function getFormId($formId) {
+        public function getFormId() {
             return $this->formId;
         }
 
@@ -116,6 +119,21 @@
             } else {
                 return null;
             }
+        }
+
+        public function getValue($element) {
+            if ($this->parsed === null) {
+                $this->parseForm();
+            }
+            if ($this->form[$this->formId]['method'] == 'POST') {
+                $req = $_POST;
+            } else {
+                $req = $_GET;
+            }
+            if (isset($this->form[$this->formId]['fields'][$element])) {
+                return $req[$element];
+            }
+            return null;
         }
 
         public function getLabel($elementId, $formId = null) {
@@ -156,6 +174,7 @@
                         }
                     }
                 }
+                $this->parsed = $return;
                 return $return;
             }
         }
@@ -228,8 +247,10 @@
                 if (isset($_POST[$name]) AND strlen($value) == 0) {
                     $value = $_POST[$name];
                 }
+                $id = $this->formName . '_' . $name;
 
                 $vars = array(
+                    'id' => $id,
                     'type' => $type,
                     'name' => $name,
                     'value' => htmlspecialchars($value),
@@ -302,7 +323,10 @@
                     }
                 }
 
+                $id = $this->formName . '_' . $selectName . '_' . $name;
+
                 $vars = array(
+                    'id' => $id,
                     'selected' => $selected,
                     'disabled' => $disabled,
                     'label' => $label,
