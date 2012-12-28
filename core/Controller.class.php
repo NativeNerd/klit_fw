@@ -49,10 +49,11 @@
                 }
                 if (method_exists($Controller, $uri['action'])) {
                     $action = $uri['action'];
+                    $Controller->_before($uri);
                     $Controller->$action($uri);
-                } elseif (method_exists($Controller, 'fallback')) {
-                    $Controller->fallback($uri);
+                    $Controller->_after($uri);
                 } else {
+                    $Controller->_fallback($uri);
                     throw new \Core\Mexception('Unknown action');
                 }
             } catch (\Core\Mexception $E) {

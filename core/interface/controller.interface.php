@@ -15,7 +15,9 @@
      */
     interface controller {
         public function __construct();
-        public function fallback();
+        public function _before($uri);
+        public function _after($uri);
+        public function _fallback($uri);
         public function __desctruct();
     }
 
