@@ -1,7 +1,7 @@
 <?php
     namespace Config;
     /**
-     * [Database.config.php]
+     * [Permission.config.php]
      * @version 1.0.0
      * @author Christian Klauenbösch
      * @copyright Klauenbösch IT Services
@@ -11,12 +11,8 @@
      *              1.0.0   -
      *
      */
-    class Database {
-        const HOST          = '127.0.0.1';
-        const USER          = 'root';
-        const PASS          = 'root';
-        const DATABASE      = 'test';
-        const CHARSET       = 'utf8';
+    class Permission {
+        const DIR   = 'src/permission/';
     }
 
 ?>

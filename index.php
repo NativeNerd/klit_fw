@@ -6,22 +6,25 @@
     require_once 'config/Database.config.php';
     require_once 'config/Template.config.php';
     require_once 'config/Controller.config.php';
+    require_once 'config/Permission.config.php';
+
+    require_once 'core/interface/controller.interface.php';
+    require_once 'core/interface/lib.interface.php';
 
     require_once 'core/Controller.class.php';
-    require_once 'core/Bootstrap.class.php';
     require_once 'core/Mexception.class.php';
     require_once 'core/Controller.class.php';
+
+    require_once 'lib/Path/Path.class.php';
+    require_once 'lib/Permission/Permission.class.php';
+    require_once 'lib/Query/Query.class.php';
+    require_once 'lib/Database/MySQL.class.php';
+    require_once 'lib/Template/Template.class.php';
     require_once 'lib/Helper/Helper.class.php';
+    require_once 'lib/Form/Form.class.php';
+    require_once 'lib/Session/Session.class.php';
 
-    $Bootstrap = new Core\Bootstrap();
-    $Bootstrap->registerApplication('Query', 'Query', '\Lib');
-    $Bootstrap->registerApplication('Database', 'MySQL', '\Lib');
-    $Bootstrap->registerApplication('Form', 'Form', '\Lib');
-    $Bootstrap->registerApplication('Template', 'Template', '\Lib');
-    $Bootstrap->registerApplication('Session', 'Session', '\Lib');
-    $Bootstrap->registerApplication('Crypto', 'Crypto', '\Lib');
-
-    $Controller = new Core\Controller($Bootstrap);
+    $Controller = new Core\Controller();
     $Controller->run();
 
 ?>

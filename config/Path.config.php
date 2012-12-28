@@ -1,7 +1,8 @@
 <?php
-    namespace Config;
+
     /**
-     * [Controller.config.php]
+     * [Path.config.php]
+     * @name File.php
      * @version 1.0.0
      * @author Christian Klauenbösch
      * @copyright Klauenbösch IT Services
@@ -9,13 +10,11 @@
      *
      * previous     now     what changed
      *              1.0.0   -
-     *
+     * 
      */
-    class Controller {
-        const DEFAULT_CONTROLLER        = 'index';
-        const DEFAULT_ACTION            = 'show';
-
-        const PATH       = 'src/controller/';
+    namespace Config;
+    class Path {
+        const HOST      = 'http://localhost/';
+        const PATH      = 'git/klit_fw/';
     }
-
 ?>

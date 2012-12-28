@@ -15,7 +15,28 @@
      *
      */
     namespace Lib;
-    final class Helper {
+    class Helper implements \Core\Implement\lib {
+        protected static $_instance = null;
+        protected static $Bootstrap = null;
+
+        public function __construct() {
+
+        }
+
+        public static function getInstance(\Core\Bootstrap $Bootstrap = null) {
+            if ($Bootstrap !== null) {
+                static::$Bootstrap = $Bootstrap;
+            }
+            if (static::$_instance === null) {
+                static::$_instance = new static();
+            }
+            return static::$_instance;
+        }
+
+        public function __destruct() {
+
+        }
+
         /**
          * Builds an absolute path
          * @param string $path
@@ -24,6 +45,7 @@
          * @param boolean $error
          * @return string|boolean
          * @throws \Core\Mexception
+         * @deprecated Path::buildPath()
          */
         final static public function buildPath($path, $_unused = null, $_unused2 = null, $error = true) {
             if (substr($path, 0, 2) == '..') {
@@ -78,6 +100,7 @@
         /**
          * Parses an URI
          * @return array|boolean
+         * @deprecated Path::parseUri()
          */
         final static public function parseUri() {
             if (strlen($_SERVER['QUERY_STRING']) > 0) {
@@ -93,6 +116,21 @@
                     $newValue[] = $value[1];
                 }
                 return array_combine($newKey, $newValue);
+            } elseif (strlen($_SERVER['PATH_INFO']) > 0) {
+                $str = explode('/', $_SERVER['PATH_INFO']);
+                $newKey = array();
+                $newValue = array();
+                unset($str[0]);
+                $newKey[] = 'main'; $newValue[] = $str[1];
+                $newKey[] = 'action'; $newValue[] = $str[2];
+                unset($str[1]); unset($str[2]);
+                foreach ($str AS $value) {
+                   $tmp = explode(':', $value, 2);
+                   $newKey[] = $tmp[0];
+                   $newValue[] = $tmp[1];
+                   unset($tmp);
+                }
+                return array_combine($newKey, $newValue);
             } else {
                 return false;
             }
@@ -100,7 +138,7 @@
 
         /**
          * Notates $value like a given type, database compatible
-         * @todo Implement into class Query
+         * @deprecated Query::_notationByType()
          * @param mixed $value
          * @param string $type
          * @return null|string

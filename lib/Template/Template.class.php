@@ -1,4 +1,5 @@
 <?php
+    namespace Lib;
     /**
      * [Template.class.php]
      * @version 1.0.0
@@ -22,53 +23,44 @@
      *  $:variable      declared    Only in the own file
      *
      */
-    namespace Lib;
-    class Template {
-        /**
-         * Contains the Bootstrap
-         * @var object
-         */
-        private $Bootstrap;
+    class Template implements \Core\Implement\lib {
+        protected static $_instance = null;
+        protected static $Bootstrap = null;
         /**
          * Contains the origin given template dir
          * @var string
          */
-        private $dir_templates_origin;
+        protected $dir_templates_origin;
         /**
          * Contains the parsed dir
          * @var string
          */
-        private $dir_templates;
+        protected $dir_templates;
         /**
          * Contains main template content
          * @var string
          */
-        private $tpl_main;
+        protected $tpl_main;
         /**
          * Contains template variables
          * @var array
          */
-        private $tpl_vars = array('internal' => array(), 'assigned' => array(), 'declared' => array());
+        protected $tpl_vars = array('internal' => array(), 'assigned' => array(), 'declared' => array());
         /**
          * Contains all templates
          * @var array
          */
-        private $tpl_contents = array();
+        protected $tpl_contents = array();
         /**
          * Contains allowed if-Relations
          * @var array
          */
-        private $allowedRelationsIf = array('<=', '>=', '==');
+        protected $allowedRelationsIf = array('<=', '>=', '==');
         /**
          * Contains a list of allowed functions
          * @var array
          */
-        private $allowedFunctionsIf = array('is_numeric');
-        /**
-         * This string is given back if a variable is not assigned
-         * @var string
-         */
-        public $return_unsetValue = '(null)';
+        protected $allowedFunctionsIf = array('is_numeric', 'haslength');
 
         /**
          * Initializes the class
@@ -76,14 +68,23 @@
          * @return null
          * @throws \Core\Mexception
          */
-        public function __construct(\Core\Bootstrap $Bootstrap) {
-            if (($this->dir_templates = Helper::buildPath(\Config\Template::DIR)) !== false) {
-                $this->Bootstrap = $Bootstrap;
+        public function __construct() {
+            if (($this->dir_templates = \Lib\Helper::buildPath(\Config\Template::DIR)) !== false) {
                 $this->dir_templates_origin = \Config\Template::DIR;
                 return ;
             } else {
                 throw new \Core\Mexception('Unknown directory given');
             }
+        }
+
+        public static function getInstance(\Core\Bootstrap $Bootstrap = null) {
+            if ($Bootstrap !== null) {
+                static::$Bootstrap = $Bootstrap;
+            }
+            if (static::$_instance === null) {
+                static::$_instance = new static();
+            }
+            return static::$_instance;
         }
 
         /**
@@ -96,8 +97,8 @@
             if (file_exists($this->dir_templates.$template)) {
                 $this->tpl_main = $this->dir_templates.$template;
                 return true;
-            } elseif(file_exists(Helper::buildPath($template))) {
-                $this->tpl_main = Helper::buildPath($template);
+            } elseif(file_exists(\Lib\Helper::buildPath($template))) {
+                $this->tpl_main = \Lib\Helper::buildPath($template);
                 return true;
             } else {
                 throw new \Core\Mexception('Unknown template');
@@ -111,8 +112,8 @@
          * @param mixed $value
          * @return boolean
          */
-        public function assign($name, $value) {
-            $this->assignWithScope($name, $value);
+        public function assign($name, $value, $filter = null) {
+            $this->assignWithScope($name, $value, 'assigned', $filter);
             return true;
         }
 
@@ -124,10 +125,31 @@
          * @return boolean
          * @throws \Core\Mexception
          */
-        private function assignWithScope($name, $value, $scope = 'assigned') {
+        protected function assignWithScope($name, $value, $scope = 'assigned', $filter = null) {
             if ($scope !== 'assigned' AND $scope != 'declared' AND $scope != 'internal') {
                 throw new \Core\Mexception('Unknown variable scope');
             } else {
+                if ($filter !== null) {
+                    if ($filter & \Config\Template::FILTER_HTML)
+                        $value = strip_tags($value);
+                    if ($filter  & \Config\Template::FILTER_QUOTES)
+                        $value = addslashes($value);
+                    if ($filter & \Config\Template::FILTER_BOOLEAN)
+                        $value = filter_var($value, FILTER_VALIDATE_BOOLEAN);
+                    if ($filter & \Config\Template::FILTER_INT)
+                        $value = filter_var($value, FILTER_VALIDATE_INT);
+                    if ($filter & \Config\Template::FILTER_FLOAT)
+                        $value = filter_var($value, FILTER_VALIDATE_FLOAT);
+                    if ($filter & \Config\Template::FILTER_WORDS)
+                        $value = preg_match('/([\w+])/', $value);
+                    if ($filter & \Config\Template::FILTER_MAIL)
+                        $value = filter_var($value, FILTER_SANITIZE_EMAIL);
+                    if ($filter & \Config\Template::FILTER_IP)
+                        $value = filter_var($value, FILTER_VALIDATE_IP);
+                    if ($filter & \Config\Template::FILTER_URL);
+                        $value = filter_var($value, FILTER_SANITIZE_URL);
+                    if ($filter & \Config\Template::FILTER_STRING);
+                }
                 $this->tpl_vars[$scope][$name] = $value;
                 return true;
             }
@@ -140,7 +162,7 @@
          * @return mixed
          * @throws \Core\Mexception
          */
-        private function getVariable($name, $scope = 'assigned') {
+        protected function getVariable($name, $scope = 'assigned') {
             if ($scope == -1) {
                 if (substr($name, 0, 1) == '.') {
                     $scope = 'internal';
@@ -190,8 +212,7 @@
              * 5. Parse the file
              * 6. Return the content
              */
-            $object = new Template($this->Bootstrap, $this->dir_templates_origin);
-            $object->return_unsetValue = '';
+            $object = new \Lib\Template();
             $object->open($file);
             $object->tpl_vars = $this->tpl_vars;
             foreach ($assign AS $key=>$value) {
@@ -287,7 +308,7 @@
          * @param array $match
          * @return string
          */
-        private function parseIgnore($match) {
+        protected function parseIgnore($match) {
             /**
              * The match array arrives as followed:
              *
@@ -302,7 +323,7 @@
          * @param array $match
          * @return null
          */
-        private function parseDeclare($match) {
+        protected function parseDeclare($match) {
             /**
              * The match array arrives as followed:
              *
@@ -322,7 +343,7 @@
          * @param array $match
          * @return string
          */
-        private function parseVariables($match) {
+        protected function parseVariables($match) {
             /**
              * The match array arrives as followed:
              *
@@ -341,7 +362,7 @@
             }
 
             if ($return === null) {
-                return $this->return_unsetValue;
+                return \Config\Template::UNDEFINIED_VAR;
             } else {
                 return $return;
             }
@@ -353,7 +374,7 @@
          * @return string
          * @throws \Core\Mexception
          */
-        private function parseInclude($include) {
+        protected function parseInclude($include) {
             $include = $include[1];
             if (is_file($this->dir_templates.$include)) {
                 /**
@@ -362,7 +383,7 @@
                  *
                  * But it could be a step into future
                  */
-                $object = new Template($this->Bootstrap, $this->dir_templates_origin);
+                $object = new \Lib\Template();
                 $object->open($include);
                 $object->tpl_vars = $this->tpl_vars;
                 $return = $object->parse();
@@ -379,7 +400,7 @@
          * @return string
          * @throws \Core\Mexception
          */
-        private function parseIfelse($match) {
+        protected function parseIfelse($match) {
             /**
              * Parsing If-Else is really hard... So here's the array given by the regex
              *
@@ -410,7 +431,7 @@
              *
              * The whole matching is really strict. So be attended to create correct code!
              */
-            if ($match[1] == 'if') {
+            if ($match[1] == 'if' OR $match[1] == 'if.') {
                 if (strlen($match[4]) > 0 AND strlen($match[8]) == 0) {
                     // Match a comparison
                     if ($match[6] == 'true') {
@@ -462,7 +483,7 @@
          * @param array $match
          * @return string
          */
-        private function parseForeach($match) {
+        protected function parseForeach($match) {
             /**
              * The match array arrives as followed
              *
@@ -490,7 +511,7 @@
          * @param array $match
          * @return string
          */
-        private function parseForm($match) {
+        protected function parseForm($match) {
             /**
              * The match array arrives as followed
              *
@@ -506,7 +527,7 @@
              *  2. (ignore)
              *  3. (ignore)
              */
-            if (($Form = $this->Bootstrap->getApplication('Form')) === false) {
+            if (($Form = Form::getInstance()) === false) {
                 return null;
             }
             if (isset($match[5])) {
@@ -521,7 +542,7 @@
          * @param array $match
          * @return string
          */
-        private function parseLabel($match) {
+        protected function parseLabel($match) {
             /**
              * The match array arrives as followed
              *
@@ -539,7 +560,7 @@
              *  4. (ignore)
              *  5. (ignore)
              */
-            if (($Form = $this->Bootstrap->getApplication('Form')) === false) {
+            if (($Form = Form::getInstance()) === false) {
                 return null;
             }
             if (isset($match[5])) {
@@ -555,8 +576,19 @@
          * @param mixed $value
          * @return true
          */
-        private function _is_numeric($value) {
+        protected function _is_numeric($value) {
             return is_numeric($value);
+        }
+
+        protected function _haslength($value) {
+            if (strlen($value) > 0) {
+                return true;
+            }
+            return false;
+        }
+
+        public function __destruct() {
+
         }
     }
 ?>

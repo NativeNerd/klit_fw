@@ -1,5 +1,5 @@
 <?php
-
+    namespace Core;
     /**
      * [Controller.class.php]
      * @version 1.0.0
@@ -13,18 +13,16 @@
      *              1.0.0   -
      *
      */
-    namespace Core;
     class Controller {
-        private $Bootstrap;
+        protected $Bootstrap;
+        protected $Path;
 
         /**
          * Initializes the class
          * @param \Core\Bootstrap $Bootstrap
          */
-        public function __construct(\Core\Bootstrap $Bootstrap) {
-            $this->Bootstrap = $Bootstrap;
-            $this->Bootstrap->openApplication($this, 'Controller');
-            require_once 'interface/controller.interface.php';
+        public function __construct() {
+            $this->Path = \Lib\Path::getInstance();
         }
 
         /**
@@ -33,8 +31,12 @@
          */
         public function run() {
             try {
-                $uri = \Lib\Helper::parseUri();
-                $path = \Lib\Helper::buildPath('src/controller/'.$uri['main'].'/'.$uri['main'].'.controller.php');
+                $uri = $this->Path->parseUri();
+                if (!$uri) {
+                    $uri['main'] = \Config\Controller::DEFAULT_CONTROLLER;
+                    $uri['action'] = \Config\Controller::DEFAULT_ACTION;
+                }
+                $path = $this->Path->buildPath('src/controller/'.$uri['main'].'/'.$uri['main'].'.controller.php');
                 if (file_exists($path)) {
                     require_once $path;
                 } else {
@@ -42,31 +44,20 @@
                 }
                 $class = '\Src\Controller\\'.$uri['main'];
                 $Controller = new $class($this->Bootstrap);
+                if (!in_array('Core\Implement\controller', class_implements($Controller, false))) {
+                    throw new \Core\Mexception('Controller does not implement interface');
+                }
                 if (method_exists($Controller, $uri['action'])) {
                     $action = $uri['action'];
+                    $Controller->_before($uri);
                     $Controller->$action($uri);
+                    $Controller->_after($uri);
                 } else {
+                    $Controller->_fallback($uri);
                     throw new \Core\Mexception('Unknown action');
                 }
             } catch (\Core\Mexception $E) {
-                $path = \Lib\Helper::buildPath('src/controller/'
-                    . \Config\Controller::DEFAULT_CONTROLLER
-                    . '/'
-                    . \Config\Controller::DEFAULT_CONTROLLER
-                    . '.controller.php');
-                if (file_exists($path)) {
-                    require_once $path;
-                } else {
-                    throw new \Core\Mexception('Unable to load default controller');
-                }
-                $class = '\Src\Controller\\' . \Config\Controller::DEFAULT_CONTROLLER;
-                $Controller = new $class($this->Bootstrap);
-                if (method_exists($Controller, \Config\Controller::DEFAULT_ACTION)) {
-                    $action = \Config\Controller::DEFAULT_ACTION;
-                    $Controller->$action(false);
-                } else {
-                    throw new \Core\Mexception('Unable to execute default action');
-                }
+                $E->quit($E->getMessage());
             }
         }
 

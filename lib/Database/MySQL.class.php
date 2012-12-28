@@ -1,4 +1,5 @@
 <?php
+    namespace Lib;
     /**
      * [MySQL.class.php]
      * @version 3.0.1
@@ -19,31 +20,26 @@
      *          3.0.1   Error-Handling verbessert, Fehlernummer wird nun auch genutzt und behandelt
      *
      */
-    namespace Lib;
-    class MySQL extends \mysqli {
-        /**
-         * Contains the Bootstrap object
-         * @var object
-         */
-        private $Bootstrap;
+    class MySQL extends \mysqli implements \Core\Implement\lib  {
+        protected static $_instance = null;
+        protected static $Bootstrap = null;
         /**
          * Contains the last result object of a single query
          * @var object
          */
-        private $query_singleResult         = null;
+        protected $query_singleResult         = null;
         /**
          * Contains all result object
          * @var array
          */
-        private $results                    = array();
+        protected $results                    = array();
 
         /**
          * Initializes the class
-         * @param \Core\Bootstrap $Bootstrap
          * @return null
          * @throws \Core\Mexception
          */
-        public function __construct(\Core\Bootstrap $Bootstrap) {
+        public function __construct() {
             parent::__construct(\Config\Database::HOST,
                 \Config\Database::USER,
                 \Config\Database::PASS,
@@ -52,6 +48,16 @@
             $this->choosedb = parent::select_db(\Config\Database::DATABASE);
             $this->query('SET NAMES \'' . \Config\Database::CHARSET . '\';');
             return ;
+        }
+
+        public static function getInstance(\Core\Bootstrap $Bootstrap = null) {
+            if ($Bootstrap !== null) {
+                static::$Bootstrap = $Bootstrap;
+            }
+            if (static::$_instance === null) {
+                static::$_instance = new static();
+            }
+            return static::$_instance;
         }
 
         /**

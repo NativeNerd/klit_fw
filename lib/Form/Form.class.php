@@ -1,4 +1,5 @@
 <?php
+    namespace Lib;
     /**
      * [FormNew.class.php]
      * @name FormNew.class.php
@@ -25,32 +26,65 @@
      *      - Ob jedes Feld gesendet wurde
      *      - Ob jedes Feld korrekte eingaben enthält
      */
-    namespace Lib;
-    class Form {
-        private $Bootstrap;
-        private $Template;
-        private $form;
-        private $allowedInputs = array(
+    class Form implements \Core\Implement\lib {
+        protected static $_instance = null;
+        protected static $Bootstrap = null;
+        protected $Template;
+        protected $form;
+        protected $allowedInputs = array(
             'text',
             'hidden',
             'checkbox',
             'radio',
-            'submit'
+            'submit',
+            'password'
             );
-        private $formId = null;
+        protected $formId = null;
+        protected $formName = null;
+        protected $parsed = null;
 
-        public function __construct(\Core\Bootstrap $Bootstrap) {
-            $this->Bootstrap = $Bootstrap;
-            $this->Template = $this->Bootstrap->getApplication('Template');
-            $this->Session = $this->Bootstrap->getApplication('Session');
+        /**
+         * Initialisiert die Klasse
+         * @return
+         */
+        public function __construct() {
+            $this->Template = \Lib\Template::getInstance();
+            $this->Session = \Lib\Session::getInstance();
             return ;
         }
 
+        /**
+         * Holt eine neue Instanz der Klasse
+         * @param \Core\Bootstrap $Bootstrap
+         * @return instance Form
+         */
+        public static function getInstance(\Core\Bootstrap $Bootstrap = null) {
+            if ($Bootstrap !== null) {
+                static::$Bootstrap = $Bootstrap;
+            }
+            if (static::$_instance === null) {
+                static::$_instance = new static();
+            }
+            return static::$_instance;
+        }
+
+        /**
+         * Opens a new form
+         * @param string $identifier
+         * @param string $action
+         * @param string $method
+         * @return boolean
+         */
         public function openForm($identifier = null, $action = 'index.php', $method = 'POST') {
             if ($identifier == null) {
-                $identifier = rand(1000, 5000);
+                do {
+                    $identifier = rand(1000, 5000);
+                } while(isset($this->form[$identifier]));
+            } elseif (isset($this->form[$identifier])) {
+                return false;
             }
-            $identifier = substr(sha1($identifier), 0, 6);
+            $this->formName = $identifier;
+            $identifier = $this->buildFormId($identifier);
             if ($method == 'POST') {
                 $this->form[$identifier]['method'] = 'POST';
             } else {
@@ -69,6 +103,11 @@
             return $identifier;
         }
 
+        /**
+         * Sets the actual Form ID
+         * @param strng $formId
+         * @return boolean
+         */
         public function setFormId($formId) {
             if (isset($this->form[$formId])) {
                 $this->formId = $formId;
@@ -78,15 +117,34 @@
             }
         }
 
-        public function getFormId($formId) {
+        /**
+         * Gets the actual Form ID
+         * @return string
+         */
+        public function getFormId() {
             return $this->formId;
         }
 
+        /**
+         * Builds a sha1-String out of a string
+         * @param string $formName
+         * @return string
+         */
+        public function buildFormId($formName) {
+            return substr(sha1($formName), 0, 6);
+        }
+
+        /**
+         * Gets the HTML-Code of an element
+         * @param string $elementId
+         * @param string $formId
+         * @return string
+         */
         public function getElement($elementId, $formId = null) {
             if ($formId == null) {
                 $formId = $this->formId;
             } else {
-                $formId = substr(sha1($formId), 0, 6);
+                $formId = $this->buildFormId($formId);
             }
             if (substr($elementId, 0, 1) == ':') {
                 if (substr($elementId, 1) == 'header') {
@@ -97,17 +155,27 @@
                 }
             }
             if (isset($this->form[$formId]['fields'][$elementId])) {
-                return $this->form[$formId]['fields'][$elementId];
+                if (isset($this->form[$formId]['fields'][$elementId]['body'])) {
+                    return $this->getSelect($elementId, $formId);
+                } else {
+                    return $this->getInput($elementId, $formId);
+                }
             } else {
                 return null;
             }
         }
 
+        /**
+         * Gets the HTML of an label
+         * @param string $elementId
+         * @param string $formId
+         * @return string
+         */
         public function getLabel($elementId, $formId = null) {
             if ($formId == null) {
                 $formId = $this->formId;
             } else {
-                $formId = substr(sha1($formId), 0, 6);
+                $formId = $this->buildFormId($formId);
             }
             if (isset($this->form[$formId]['labels'][$elementId])) {
                 return $this->form[$formId]['labels'][$elementId];
@@ -116,6 +184,66 @@
             }
         }
 
+        /**
+         * Parses an Select element into HTML
+         * @param string $elementId
+         * @param string $formId
+         * @return boolean
+         */
+        protected function getSelect($elementId, $formId) {
+            if (isset($this->form[$formId]['fields'][$elementId]['body'])) {
+                $headerVars = $this->form[$formId]['fields'][$elementId]['header'];
+                $footerVars = $this->form[$formId]['fields'][$elementId]['footer'];
+                $header = $this->Template->parseSimple('lib/Form/src/tpl/selectHeader.tpl', $headerVars);
+                $footer = $this->Template->parseSimple('lib/Form/src/tpl/selectFooter.tpl', $footerVars);
+                $body = '';
+                foreach ($this->form[$formId]['fields'][$elementId]['body'] AS $value) {
+                    $body .= $this->Template->parseSimple('lib/Form/src/tpl/selectBody.tpl', $value);
+                }
+                return $header . $body . $footer;
+            }
+            return false;
+        }
+
+        /**
+         * Parses an Input element into HTML
+         * @param string $elementId
+         * @param string $formId
+         * @return boolean
+         */
+        protected function getInput($elementId, $formId) {
+            if (isset($this->form[$formId]['fields'][$elementId]['vars'])) {
+                $vars = $this->form[$formId]['fields'][$elementId]['vars'];
+                $body = $this->Template->parseSimple('lib/Form/src/tpl/input.tpl', $vars);
+                return $body;
+            }
+            return false;
+        }
+
+        /**
+         * Gets the value of an element
+         * @param string $element
+         * @return mixed
+         */
+        public function getValue($element) {
+            if ($this->parsed === null) {
+                $this->parseForm();
+            }
+            if ($this->form[$this->formId]['method'] == 'POST') {
+                $req = $_POST;
+            } else {
+                $req = $_GET;
+            }
+            if (isset($this->form[$this->formId]['fields'][$element])) {
+                return $req[$element];
+            }
+            return null;
+        }
+
+        /**
+         * Parses a form and returns goodness of sent fields
+         * @return array
+         */
         public function parseForm() {
             if (count($_POST) == 0 AND count($_GET) == 0) {
                 return false;
@@ -132,19 +260,25 @@
                     } else {
                         if (isset($this->form[$this->formId]['regex'][$name])) {
                             if (!preg_match($this->form[$this->formId]['regex'][$name], $_POST[$name])) {
-                                $return['wrong'][] = $name;
+                                $return['false'][] = $name;
                             } else {
-                                $return['ok'][] = $name;
+                                $return['true'][] = $name;
                             }
                         } else {
-                            $return['ok'][] = $name;
+                            $return['unchecked'][] = $name;
                         }
                     }
                 }
+                $this->parsed = $return;
                 return $return;
             }
         }
 
+        /**
+         * Stores form into session
+         * @return boolean
+         * @throws Mexception
+         */
         public function storeForm() {
             if (!is_object($this->Session)) {
                 throw new Mexception('Unable to store Session');
@@ -153,9 +287,13 @@
                     $this->Session->setValue($this->formId.'->'.$name, $_POST[$name]);
                 }
             }
+            return true;
         }
 
-        // Get all fields of the form
+        /**
+         * Gets the values of the form as an array
+         * @return array
+         */
         public function getFormValues() {
             if (is_object($this->Session)) {
                 $return = $this->Session->getValue($this->formId);
@@ -164,7 +302,7 @@
             }
             if ($return === null) {
                 $return = array();
-                if ($this->form['method'] == 'POST') {
+                if ($this->form[$this->formId]['method'] == 'POST') {
                     $req = $_POST;
                 } else {
                     $req = $_GET;
@@ -176,18 +314,43 @@
             return $return;
         }
 
+        /**
+         * Pre Fills a form
+         * @return boolean
+         */
         public function preFill() {
-            $replace = '';
+            if ($this->form[$this->formId]['method'] == 'POST') {
+                $req = $_POST;
+            } else {
+                $req = $_GET;
+            }
             foreach ($this->form[$this->formId]['fields'] AS $name => $value) {
-                if (strlen(trim($_POST[$name])) > 0) {
-                    $replace = 'value="'. htmlspecialchars(trim($_POST[$name])).'"';
-                    $value = preg_replace('/value\=\"(.+?)\"/', $replace, $value);
-                    $this->form[$this->formId]['fields'][$name] = $value;
+                if (!isset($_POST[$name]))
+                    continue;
+                if (strlen(trim($_POST[$name])) == 0)
+                    continue;
+                if (!isset($value['vars']['type'])) {
+                    $this->form[$this->formId]['fields'][$name]['body'][$_POST[$name]]['selected'] = 'selected="selected"';
+                } elseif ($value['vars']['type'] == 'submit') {
+                    continue;
+                } elseif ($value['vars']['type'] == 'text') {
+                    $this->form[$this->formId]['fields'][$name]['vars']['value'] = htmlspecialchars(trim($req[$name]));
                 }
             }
             return true;
         }
 
+        /**
+         * Adds an Input to the form
+         * @param string $type
+         * @param string $name
+         * @param string $value
+         * @param boolean $checked
+         * @param boolean $disabled
+         * @param boolean $readonly
+         * @param boolean $maxlength
+         * @return boolean
+         */
         public function addInput($type, $name, $value = '', $checked = false, $disabled = false, $readonly = false, $maxlength = false) {
             if (in_array($type, $this->allowedInputs)) {
                 if ($checked == false) {
@@ -210,11 +373,13 @@
                 } else {
                     $maxlength = $maxlength;
                 }
-                if (isset($_POST[$name]) AND strlen($value) == 0) {
+                if (isset($_POST[$name]) AND strlen($value) == 0 AND $type !== 'password') {
                     $value = $_POST[$name];
                 }
+                $id = $this->formName . '_' . $name;
 
                 $vars = array(
+                    'id' => $id,
                     'type' => $type,
                     'name' => $name,
                     'value' => htmlspecialchars($value),
@@ -223,16 +388,21 @@
                     'readonly' => $readonly,
                     'maxlength' => $maxlength
                     );
-
-                $return = $this->Template->parseSimple('lib/Form/src/tpl/input.tpl', $vars);
-                $this->form[$this->formId]['fields'][$name] = $return;
-
+                $this->form[$this->formId]['fields'][$name]['vars'] = $vars;
                 return true;
             } else {
                 return false;
             }
         }
 
+        /**
+         * Adds a select
+         * @param string $name
+         * @param int $size
+         * @param boolean $multiple
+         * @param boolean $disabled
+         * @return boolean
+         */
         public function addSelect($name, $size = 1, $multiple = false, $disabled = false) {
             $this->form[$this->formId]['fields'][$name] = array();
             if ($multiple == false) {
@@ -257,13 +427,21 @@
                 'size' => $size,
                 'name' => $name
                 );
-            $return = $this->Template->parseSimple('lib/Form/src/tpl/selectHeader.tpl', $vars);
-            $this->form[$this->formId]['fields'][$name]['header'] = $return;
-            $return = $this->Template->parseSimple('lib/Form/src/tpl/selectFooter.tpl', $vars);
-            $this->form[$this->formId]['fields'][$name]['footer'] = $return;
+            $this->form[$this->formId]['fields'][$name]['header'] = $vars;
+            $this->form[$this->formId]['fields'][$name]['footer'] = $vars;
             return true;
         }
 
+        /**
+         * Adds an option onto a select
+         * @param string $selectName
+         * @param string $name
+         * @param string $value
+         * @param boolean $label
+         * @param boolean $selected
+         * @param boolean $disabled
+         * @return boolean
+         */
         public function addOption($selectName, $name, $value, $label = false, $selected = false, $disabled = false) {
             if (isset($this->form[$this->formId]['fields'][$selectName])) {
                 if ($selected == false) {
@@ -287,7 +465,10 @@
                     }
                 }
 
+                $id = $this->formName . '_' . $selectName . '_' . $name;
+
                 $vars = array(
+                    'id' => $id,
                     'selected' => $selected,
                     'disabled' => $disabled,
                     'label' => $label,
@@ -295,15 +476,21 @@
                     'name' => $name,
                     'value' => $value
                     );
-                $return = $this->Template->parseSimple('lib/Form/src/tpl/selectBody.tpl', $vars);
-                $this->form[$this->formId]['fields'][$selectName]['body'][] = $return;
+                $this->form[$this->formId]['fields'][$selectName]['body'][$name] = $vars;
                 return true;
             } else {
                 return false;
             }
         }
 
+        /**
+         * Closes the select
+         * @deprecated
+         * @param string $selectName
+         * @return boolean
+         */
         public function closeSelect($selectName) {
+            return ;
             if (!isset($this->form[$this->formId]['fields'][$selectName])) {
                 return false;
             }
@@ -317,6 +504,12 @@
             return true;
         }
 
+        /**
+         * Adds a label
+         * @param string $name
+         * @param string $label
+         * @return boolean
+         */
         public function addLabel($name, $label) {
             if (isset($this->form[$this->formId]['fields'][$name])) {
                 $vars = array(
@@ -332,6 +525,12 @@
             }
         }
 
+        /**
+         * Adds a regex onto an element (for parsing)
+         * @param string $name
+         * @param regex $regex
+         * @return boolean
+         */
         public function addRegex($name, $regex) {
             if (isset($this->form[$this->formId]['fields'][$name])) {
                 if (preg_match($regex, ' ') === false) {
@@ -345,7 +544,10 @@
             }
         }
 
-        public function __desctruct() {
+        /**
+         * Closes the class
+         */
+        public function __destruct() {
 
         }
 

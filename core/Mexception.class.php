@@ -1,4 +1,5 @@
 <?php
+    namespace Core;
     /**
      * [Mexception.class.php]
      * @version 1.1.0
@@ -18,7 +19,6 @@
      *  9   Display the full error
      *
      */
-    namespace Core;
     class Mexception extends \Exception {
         /**
         * Throws a Exception on Regular way

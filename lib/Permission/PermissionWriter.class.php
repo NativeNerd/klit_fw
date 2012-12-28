@@ -1,7 +1,7 @@
 <?php
-    namespace Config;
+
     /**
-     * [Controller.config.php]
+     * [PermissionWriter.class.php]
      * @version 1.0.0
      * @author Christian Klauenbösch
      * @copyright Klauenbösch IT Services
@@ -11,11 +11,16 @@
      *              1.0.0   -
      *
      */
-    class Controller {
-        const DEFAULT_CONTROLLER        = 'index';
-        const DEFAULT_ACTION            = 'show';
+    class PermissionWriter {
 
-        const PATH       = 'src/controller/';
+        public function __construct() {
+
+        }
+
+        public function __desctruct() {
+
+        }
+
     }
 
 ?>

@@ -1,4 +1,5 @@
 <?php
+    namespace Lib;
     /**
      * [Crypto.class.php]
      * @version 1.0.0
@@ -12,8 +13,9 @@
      *
      *
      */
-    namespace Lib;
-    final class Crypto {
+    class Crypto implements \Core\Implement\lib {
+        protected static $_instance = null;
+        protected static $Bootstrap = null;
         protected $keyDir = 'keys';
         protected $cipher;
         protected $mode;
@@ -42,6 +44,16 @@
                 throw new Mexception('Class Helper not found');
             $this->keyDir = Helper::buildPath($this->keyDir);
             return true;
+        }
+
+        public static function getInstance(\Core\Bootstrap $Bootstrap = null) {
+            if ($Bootstrap !== null) {
+                static::$Bootstrap = $Bootstrap;
+            }
+            if (static::$_instance === null) {
+                static::$_instance = new static();
+            }
+            return static::$_instance;
         }
 
         /**
@@ -113,7 +125,7 @@
          * @param string $filename
          * @throws Mexception
          */
-        public function setKeyByFile($id) {
+        public function setKeyByFile($filename) {
             if (!file_exists($this->keyDir.$filename))
                 throw new Mexception('Key does not exist any more');
             $this->key = file_get_contents($this->keyDir.$filename);
@@ -146,6 +158,10 @@
                 return mcrypt_decrypt($this->cipher, $this->key, $encryptedText, $this->mode, $this->iv);
             } else
                 throw new Mexception('Not allowed');
+        }
+
+        public function __destruct() {
+
         }
     }
 ?>

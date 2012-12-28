@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<law>
+    <groups>
+        <group name="root" level="0" />
+        <group name="anonymous" level="9" />
+    </groups>
+    <rules to="*">
+        <category name="entry">
+            <item name="editEntry" value="1"/>
+        </category>
+    </rules>
+    <rules to="root">
+        <category name="entry">
+            <item name="deleteEntry" value="0"/>
+            <item name="thisEntry" value="1"/>
+            <item name="closeEntry" value="1"/>
+        </category>
+    </rules>
+    <rules to="anonymous">
+        <category name="entry">
+            <item name="moveEntry" value="0"/>
+            <item name="deleteEntry" value="0"/>
+            <item name="thisEntry" value="0"/>
+            <item name="closeEntry" value="0"/>
+        </category>
+    </rules>
+</law>
