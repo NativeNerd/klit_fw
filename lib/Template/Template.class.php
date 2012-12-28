@@ -60,7 +60,7 @@
          * Contains a list of allowed functions
          * @var array
          */
-        protected $allowedFunctionsIf = array('is_numeric');
+        protected $allowedFunctionsIf = array('is_numeric', 'haslength');
 
         /**
          * Initializes the class
@@ -112,8 +112,8 @@
          * @param mixed $value
          * @return boolean
          */
-        public function assign($name, $value) {
-            $this->assignWithScope($name, $value);
+        public function assign($name, $value, $filter = null) {
+            $this->assignWithScope($name, $value, 'assigned', $filter);
             return true;
         }
 
@@ -125,10 +125,31 @@
          * @return boolean
          * @throws \Core\Mexception
          */
-        protected function assignWithScope($name, $value, $scope = 'assigned') {
+        protected function assignWithScope($name, $value, $scope = 'assigned', $filter = null) {
             if ($scope !== 'assigned' AND $scope != 'declared' AND $scope != 'internal') {
                 throw new \Core\Mexception('Unknown variable scope');
             } else {
+                if ($filter !== null) {
+                    if ($filter & \Config\Template::FILTER_HTML)
+                        $value = strip_tags($value);
+                    if ($filter  & \Config\Template::FILTER_QUOTES)
+                        $value = addslashes($value);
+                    if ($filter & \Config\Template::FILTER_BOOLEAN)
+                        $value = filter_var($value, FILTER_VALIDATE_BOOLEAN);
+                    if ($filter & \Config\Template::FILTER_INT)
+                        $value = filter_var($value, FILTER_VALIDATE_INT);
+                    if ($filter & \Config\Template::FILTER_FLOAT)
+                        $value = filter_var($value, FILTER_VALIDATE_FLOAT);
+                    if ($filter & \Config\Template::FILTER_WORDS)
+                        $value = preg_match('/([\w+])/', $value);
+                    if ($filter & \Config\Template::FILTER_MAIL)
+                        $value = filter_var($value, FILTER_SANITIZE_EMAIL);
+                    if ($filter & \Config\Template::FILTER_IP)
+                        $value = filter_var($value, FILTER_VALIDATE_IP);
+                    if ($filter & \Config\Template::FILTER_URL);
+                        $value = filter_var($value, FILTER_SANITIZE_URL);
+                    if ($filter & \Config\Template::FILTER_STRING);
+                }
                 $this->tpl_vars[$scope][$name] = $value;
                 return true;
             }
@@ -410,7 +431,7 @@
              *
              * The whole matching is really strict. So be attended to create correct code!
              */
-            if ($match[1] == 'if') {
+            if ($match[1] == 'if' OR $match[1] == 'if.') {
                 if (strlen($match[4]) > 0 AND strlen($match[8]) == 0) {
                     // Match a comparison
                     if ($match[6] == 'true') {
@@ -557,6 +578,13 @@
          */
         protected function _is_numeric($value) {
             return is_numeric($value);
+        }
+
+        protected function _haslength($value) {
+            if (strlen($value) > 0) {
+                return true;
+            }
+            return false;
         }
 
         public function __destruct() {
