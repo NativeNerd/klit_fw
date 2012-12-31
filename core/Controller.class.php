@@ -22,7 +22,7 @@
          * @param \Core\Bootstrap $Bootstrap
          */
         public function __construct() {
-            $this->Path = \Lib\Path::getInstance();
+            $this->Path = \Lib\Path\Path::getInstance();
         }
 
         /**

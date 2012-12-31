@@ -1,5 +1,5 @@
 <?php
-    namespace Lib;
+    namespace Lib\Template;
     /**
      * [Template.class.php]
      * @version 1.0.0
@@ -69,7 +69,7 @@
          * @throws \Core\Mexception
          */
         public function __construct() {
-            if (($this->dir_templates = \Lib\Helper::buildPath(\Config\Template::DIR)) !== false) {
+            if (($this->dir_templates = \Lib\Helper\Helper::buildPath(\Config\Template::DIR)) !== false) {
                 $this->dir_templates_origin = \Config\Template::DIR;
                 return ;
             } else {
@@ -97,8 +97,8 @@
             if (file_exists($this->dir_templates.$template)) {
                 $this->tpl_main = $this->dir_templates.$template;
                 return true;
-            } elseif(file_exists(\Lib\Helper::buildPath($template))) {
-                $this->tpl_main = \Lib\Helper::buildPath($template);
+            } elseif(file_exists(\Lib\Helper\Helper::buildPath($template))) {
+                $this->tpl_main = \Lib\Helper\Helper::buildPath($template);
                 return true;
             } else {
                 throw new \Core\Mexception('Unknown template');
@@ -212,7 +212,7 @@
              * 5. Parse the file
              * 6. Return the content
              */
-            $object = new \Lib\Template();
+            $object = new Template();
             $object->open($file);
             $object->tpl_vars = $this->tpl_vars;
             foreach ($assign AS $key=>$value) {
@@ -383,7 +383,7 @@
                  *
                  * But it could be a step into future
                  */
-                $object = new \Lib\Template();
+                $object = new Template();
                 $object->open($include);
                 $object->tpl_vars = $this->tpl_vars;
                 $return = $object->parse();
@@ -527,7 +527,7 @@
              *  2. (ignore)
              *  3. (ignore)
              */
-            if (($Form = Form::getInstance()) === false) {
+            if (($Form = \Lib\Form\Form::getInstance()) === false) {
                 return null;
             }
             if (isset($match[5])) {
@@ -560,7 +560,7 @@
              *  4. (ignore)
              *  5. (ignore)
              */
-            if (($Form = Form::getInstance()) === false) {
+            if (($Form = \Lib\Form\Form::getInstance()) === false) {
                 return null;
             }
             if (isset($match[5])) {

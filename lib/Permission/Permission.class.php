@@ -1,5 +1,5 @@
 <?php
-    namespace Lib;
+    namespace Lib\Permission;
     /**
      * [Permission.class.php]
      * @version 1.0.0
@@ -22,7 +22,7 @@
         protected $activeGroups;
 
         public function __construct() {
-            $this->Path = \Lib\Path::getInstance();
+            $this->Path = \Lib\Path\Path::getInstance();
             return ;
         }
 

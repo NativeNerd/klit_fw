@@ -32,10 +32,10 @@
         protected $Form;
 
         public function __construct() {
-            $this->Query = \Lib\Query::getInstance();
-            $this->Template = \Lib\Template::getInstance();
-            $this->Permission = \Lib\Permission::getInstance();
-            $this->Form = \Lib\Form::getInstance();
+            $this->Query = \Lib\Query\Query::getInstance();
+            $this->Template = \Lib\Template\Template::getInstance();
+            $this->Permission = \Lib\Permission\Permission::getInstance();
+            $this->Form = \Lib\Form\Form::getInstance();
             return ;
         }
 

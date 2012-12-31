@@ -1,4 +1,5 @@
 <?php
+    namespace Lib\Query;
     /**
      * ToDo (nach Priorität geordnet):
      *
@@ -31,7 +32,6 @@
      *  - Der Benutzer bekommt ein Result das er mit $Model->getResult() abrufen kann
      *      - Der Benutzer kann direkt mit $Model->getResult()->fetch_assoc() die Daten verarbeiten
      */
-    namespace Lib;
     class Query implements \Core\Implement\lib {
         protected static $_instance = null;
         protected static $Bootstrap = null;
@@ -153,7 +153,7 @@
          * @throws \Core\Mexception
          */
         public function __construct() {
-            $this->Database = new \Lib\MySQL;
+            $this->Database = new \Lib\Database\MySQL;
             return ;
         }
 

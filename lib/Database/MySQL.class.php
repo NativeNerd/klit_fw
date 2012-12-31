@@ -1,5 +1,5 @@
 <?php
-    namespace Lib;
+    namespace Lib\Database;
     /**
      * [MySQL.class.php]
      * @version 3.0.1

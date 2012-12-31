@@ -1,5 +1,5 @@
 <?php
-    namespace Lib;
+    namespace Lib\Path;
     /**
      * [Path.class.php]
      * @version 1.0.0

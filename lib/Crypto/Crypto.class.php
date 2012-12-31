@@ -1,5 +1,5 @@
 <?php
-    namespace Lib;
+    namespace Lib\Crypto;
     /**
      * [Crypto.class.php]
      * @version 1.0.0

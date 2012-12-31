@@ -1,8 +1,8 @@
 <?php
-    namespace Lib;
+    namespace Lib\Form;
     /**
-     * [FormNew.class.php]
-     * @name FormNew.class.php
+     * [Form.class.php]
+     * @name Form.class.php
      * @version 1.0.0
      * @author Christian Klauenbösch
      * @copyright Klauenbösch IT Services
@@ -48,8 +48,8 @@
          * @return
          */
         public function __construct() {
-            $this->Template = \Lib\Template::getInstance();
-            $this->Session = \Lib\Session::getInstance();
+            $this->Template = \Lib\Template\Template::getInstance();
+            $this->Session = \Lib\Session\Session::getInstance();
             return ;
         }
 
@@ -281,7 +281,7 @@
          */
         public function storeForm() {
             if (!is_object($this->Session)) {
-                throw new Mexception('Unable to store Session');
+                throw new \Core\Mexception('Unable to store Session');
             } else {
                 foreach ($this->form[$this->formId]['fields'] AS $name => $value) {
                     $this->Session->setValue($this->formId.'->'.$name, $_POST[$name]);

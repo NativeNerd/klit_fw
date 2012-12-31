@@ -1,5 +1,5 @@
 <?php
-    namespace Lib;
+    namespace Lib\Session;
     /**
      * [Session.class.php]
      * @name Session.class.php

@@ -1,4 +1,5 @@
 <?php
+    namespace Lib\Helper;
     /**
      * [Helper.class.php]
      * @version 1.1.0
@@ -14,7 +15,6 @@
      *              1.1.0   buildPath() now without $path (now $_unused)
      *
      */
-    namespace Lib;
     class Helper implements \Core\Implement\lib {
         protected static $_instance = null;
         protected static $Bootstrap = null;

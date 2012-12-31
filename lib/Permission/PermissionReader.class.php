@@ -1,5 +1,5 @@
 <?php
-
+    namespace Lib\Permission;
     /**
      * [PermissionReader.class.php]
      * @version 1.0.0
