@@ -54,11 +54,11 @@
                     $Controller->_after($uri);
                 } else {
                     $Controller->_fallback($uri);
-                    throw new \Core\Mexception('Unknown action');
                 }
             } catch (\Core\Mexception $E) {
                 $E->quit($E->getMessage());
             }
+            return true;
         }
 
         /**
