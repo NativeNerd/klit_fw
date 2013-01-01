@@ -42,7 +42,7 @@
                 } else {
                     throw new \Core\Mexception('Unknown controller');
                 }
-                $class = '\Src\Controller\\'.$uri['main'];
+                $class = '\Src\Controller\\'.ucfirst($uri['main']);
                 $Controller = new $class($this->Bootstrap);
                 if (!in_array('Core\Implement\controller', class_implements($Controller, false))) {
                     throw new \Core\Mexception('Controller does not implement interface');

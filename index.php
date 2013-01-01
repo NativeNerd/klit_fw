@@ -3,6 +3,10 @@
     error_reporting(E_ALL);
 
     require_once 'config/Constant.config.php';
+    require_once 'core/Autoloader.class.php';
+    spl_autoload_register(array('\Core\Autoloader', 'load'), true, true);
+
+    /**
     require_once 'config/Database.config.php';
     require_once 'config/Template.config.php';
     require_once 'config/Controller.config.php';
@@ -23,6 +27,7 @@
     require_once 'lib/Helper/Helper.class.php';
     require_once 'lib/Form/Form.class.php';
     require_once 'lib/Session/Session.class.php';
+     */
 
     $Controller = new Core\Controller();
     $Controller->run();

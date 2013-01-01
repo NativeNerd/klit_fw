@@ -97,8 +97,8 @@
                 'method' => $this->form[$identifier]['method'],
                 'action' => $this->form[$identifier]['action']
                 );
-            $this->form[$identifier]['header'] = $this->Template->parseSimple('lib/Form/src/tpl/formHeader.tpl', $vars);
-            $this->form[$identifier]['footer'] = $this->Template->parseSimple('lib/Form/src/tpl/formFooter.tpl');
+            $this->form[$identifier]['header'] = $this->Template->parseSimple('lib/form/src/tpl/formHeader.tpl', $vars);
+            $this->form[$identifier]['footer'] = $this->Template->parseSimple('lib/form/src/tpl/formFooter.tpl');
 
             return $identifier;
         }
@@ -194,11 +194,11 @@
             if (isset($this->form[$formId]['fields'][$elementId]['body'])) {
                 $headerVars = $this->form[$formId]['fields'][$elementId]['header'];
                 $footerVars = $this->form[$formId]['fields'][$elementId]['footer'];
-                $header = $this->Template->parseSimple('lib/Form/src/tpl/selectHeader.tpl', $headerVars);
-                $footer = $this->Template->parseSimple('lib/Form/src/tpl/selectFooter.tpl', $footerVars);
+                $header = $this->Template->parseSimple('lib/form/src/tpl/selectHeader.tpl', $headerVars);
+                $footer = $this->Template->parseSimple('lib/form/src/tpl/selectFooter.tpl', $footerVars);
                 $body = '';
                 foreach ($this->form[$formId]['fields'][$elementId]['body'] AS $value) {
-                    $body .= $this->Template->parseSimple('lib/Form/src/tpl/selectBody.tpl', $value);
+                    $body .= $this->Template->parseSimple('lib/form/src/tpl/selectBody.tpl', $value);
                 }
                 return $header . $body . $footer;
             }
@@ -214,7 +214,7 @@
         protected function getInput($elementId, $formId) {
             if (isset($this->form[$formId]['fields'][$elementId]['vars'])) {
                 $vars = $this->form[$formId]['fields'][$elementId]['vars'];
-                $body = $this->Template->parseSimple('lib/Form/src/tpl/input.tpl', $vars);
+                $body = $this->Template->parseSimple('lib/form/src/tpl/input.tpl', $vars);
                 return $body;
             }
             return false;
@@ -517,7 +517,7 @@
                     'value' => $label
                     );
 
-                $return = $this->Template->parseSimple('lib/Form/src/tpl/label.tpl', $vars);
+                $return = $this->Template->parseSimple('lib/form/src/tpl/label.tpl', $vars);
                 $this->form[$this->formId]['labels'][$name] = $return;
                 return true;
             } else {

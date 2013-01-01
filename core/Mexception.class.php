@@ -30,7 +30,12 @@
                 $message = 'keine';
             }
             if (is_object($message)) {
+                $line = $message->line;
+                $file = $message->file;
                 $message = $message->message;
+            } else {
+                $line = null;
+                $file = null;
             }
             if (\Config\Constant::MEXCEPTION_ELEVEL == -1) {
                 if (is_numeric(substr($message, 0, 4))) {
@@ -39,8 +44,18 @@
                     $message = '(null)';
                 }
             }
-            echo str_replace('{$errorvalue}', $message,
-                file_get_contents(\Lib\Helper::buildPath(\Config\Constant::MEXCEPTION_EDOC)));
+            $search = array(
+                '{$errorvalue}',
+                '{$errorfile}',
+                '{$errorline}'
+                );
+            $replace = array(
+                $message,
+                $file,
+                $line
+            );
+            echo str_replace($search, $replace,
+                file_get_contents(\Lib\Helper\Helper::buildPath(\Config\Constant::MEXCEPTION_EDOC)));
             die();
         }
 

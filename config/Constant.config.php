@@ -26,9 +26,15 @@
         const PATH_TRAIT            = 'core/trait/';
         const PATH_CSS              = 'media/css/';
         const PATH_JS               = 'media/js/';
+        const PATH_MODEL            = 'model/';
+        const PATH_MAP              = 'map/';
 
         const FILE_COREEXT          = '.class.php';
         const FILE_LIBEXT           = '.class.php';
         const FILE_CONFIGEXT        = '.config.php';
+        const FILE_MAPEXT           = '.map.php';
+        const FILE_MODELEXT         = '.model.php';
+        const FILE_CONTROLLEREXT    = '.controller.php';
+        const FILE_IMPLEMENTEXT     = '.interface.php';
     }
 ?>

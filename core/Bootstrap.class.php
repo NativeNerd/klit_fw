@@ -28,7 +28,7 @@
                 $this->registered[$applicationName] = $namespace.'\\'.$className;
                 return true;
             } else {
-                $path = \Lib\Helper::buildPath('lib/'.$applicationName.'/'.$className.'.class.php');
+                $path = \Lib\Helper\Helper::buildPath('lib/'.$applicationName.'/'.$className.'.class.php');
                 if (file_exists($path)) {
                     require_once $path;
                 }

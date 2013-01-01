@@ -70,7 +70,7 @@
 
         // Helper::parseUri()
         public function parseUri() {
-            if (strlen($_SERVER['QUERY_STRING']) > 0) {
+            if (@strlen($_SERVER['QUERY_STRING']) > 0) {
                 $str = explode('&', $_SERVER['QUERY_STRING']);
                 $newKey = array();
                 $newValue = array();
@@ -83,7 +83,7 @@
                     $newValue[] = urldecode($value[1]);
                 }
                 return array_combine($newKey, $newValue);
-            } elseif (strlen($_SERVER['PATH_INFO']) > 0) {
+            } elseif (@strlen($_SERVER['PATH_INFO']) > 0) {
                 $str = explode('/', $_SERVER['PATH_INFO']);
                 $newKey = array();
                 $newValue = array();
@@ -116,7 +116,7 @@
             elseif (is_file($wholePath))
                 return $wholePath;
             elseif ($throwError)
-                throw new \Core\Mexception('Invalid path given');
+                throw new \Core\Mexception('Invalid path given, given ' . $pathOrFile);
             else
                 return $wholePath;
         }

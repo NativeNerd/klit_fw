@@ -52,7 +52,6 @@
                 $path = substr($path, 3);
                 return \Lib\Helper::buildPath($path, null, $extension, $error);
             }
-
             // Project directory
             $dir = substr($_SERVER['SCRIPT_FILENAME'], 0, -strlen(basename($_SERVER['SCRIPT_FILENAME'])))
                 .$path;
@@ -62,7 +61,7 @@
             elseif (is_file($dir))
                 return $dir;
             elseif ($error)
-                throw new \Core\Mexception('Invalid path given');
+                throw new \Core\Mexception('Invalid path given, given '.$path);
             else
                 return false;
         }
