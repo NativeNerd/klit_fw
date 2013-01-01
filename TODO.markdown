@@ -2,7 +2,9 @@
 
 ## Library
 ### Priority A
-* Organize Bootstrap and Autoloader
+* Create UserModel and UserBean class
+** a UserModel handles DB-Data
+** a userBean contains DB-Data
 * implement .json files to declare lib, required lib & co
 * How about Database model?
 * Recreate Form class
