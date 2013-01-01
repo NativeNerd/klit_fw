@@ -2,13 +2,7 @@
 
 ## Library
 ### Priority A
-* Create UserModel and UserBean class
-** a UserModel handles DB-Data
-** a userBean contains DB-Data
 * implement .json files to declare lib, required lib & co
-* How about Database model?
-* Recreate Form class
-** Parsing as late as possible
 
 ### Priority B
 * Extend Template class on
