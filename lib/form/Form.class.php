@@ -36,6 +36,7 @@
 
         public function setId($id) {
             $this->id = $this->buildHash($id);
+            $this->Header->setHash($this->id);
             return true;
         }
 
@@ -48,7 +49,7 @@
         }
 
         public function fill() {
-            
+
         }
 
         public function setAction($action) {

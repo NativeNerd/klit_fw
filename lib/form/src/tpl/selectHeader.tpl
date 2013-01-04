@@ -1,1 +1,4 @@
-<select name="{$name}" {$disabled} {$multiple} {if haslength($size)}size="{$size}"{/if}>
+<select name="{$name}"
+    {$disabled}
+    {if. haslength($size)}size="{$size}"
+    {$multiple}>

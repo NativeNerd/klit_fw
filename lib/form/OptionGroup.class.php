@@ -25,14 +25,14 @@
 
         public function __toString() {
             $this->Template = new \Lib\Template\Template();
-            $this->Template->open(\Config\Form::TPL_PATH . 'selectGroupHeader.tpl');
+            $this->Template->open(\Config\Form::TPL_PATH . 'optgroupHeader.tpl');
             $this->Template->assign('name', $this->groupName);
             $header = $this->Template->parse();
             $body = '';
             foreach ($this->options AS $value) {
                 $body .= (string)$value;
             }
-            $footer = $this->Template->parseSimple(\Config\Form::TPL_PATH . 'selectGroupFooter.tpl');
+            $footer = $this->Template->parseSimple(\Config\Form::TPL_PATH . 'optgroupFooter.tpl');
             return $header . $body . $footer;
         }
     }

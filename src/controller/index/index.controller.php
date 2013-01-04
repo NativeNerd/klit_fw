@@ -104,11 +104,11 @@
         }
 
         public function login($uri) {
-
+            $this->_loginForm();
             return ;
         }
 
-        public function _fallback($uri) {
+        public function _fallback($uri = null) {
             $this->Template->open('index/fallback.tpl');
             $this->Template->show();
             return ;

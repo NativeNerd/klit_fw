@@ -10,7 +10,7 @@
      * previous     now     what changed
      *              1.0.0   -
      */
-    class Textfield extends InputField {
+    class Hidden extends InputField {
 
         public function __construct() {
             $this->type = 'hidden';

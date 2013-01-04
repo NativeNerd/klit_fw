@@ -67,7 +67,8 @@
             $this->Template->assign('disabled', $this->disabled);
             $this->Template->assign('multiple', $this->multiple);
             $this->Template->assign('size', $this->size);
-            $header = $this->Template->parse();
+            $header =  $this->Template->parse();
+            $header = preg_replace('/\s{2,}/sm', ' ', $header);
             $footer = $this->Template->parseSimple(\Config\Form::TPL_PATH . 'selectFooter.tpl');
             $body = '';
             if (is_array($this->optiongroups)) {

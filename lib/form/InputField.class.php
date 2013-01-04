@@ -92,7 +92,9 @@
             $this->Template->assign('disabled', $this->disabled);
             $this->Template->assign('readonly', $this->readonly);
             $this->Template->assign('maxlength', $this->maxlength);
-            return $this->Template->parse();
+            $string =  $this->Template->parse();
+            $string = preg_replace('/\s{2,}/sm', ' ', $string);
+            return $string;
         }
     }
 ?>

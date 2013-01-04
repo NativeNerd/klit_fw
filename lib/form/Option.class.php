@@ -58,14 +58,16 @@
 
         public function __toString() {
             $this->Template = new \Lib\Template\Template();
-            $this->Template->open(\Config\Form::TPL_PATH . 'selectBody.tpl');
+            $this->Template->open(\Config\Form::TPL_PATH . 'option.tpl');
             $this->Template->assign('id', $this->id);
             $this->Template->assign('name', $this->name);
             $this->Template->assign('value', $this->value);
             $this->Template->assign('label', $this->label);
             $this->Template->assign('disabled', $this->disabled);
             $this->Template->assign('selected', $this->selected);
-            return $this->Template->parse();
+            $string =  $this->Template->parse();
+            $string = preg_replace('/\s{2,}/sm', ' ', $string);
+            return $string;
         }
     }
 ?>
