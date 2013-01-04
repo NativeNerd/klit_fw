@@ -1,7 +1,7 @@
 <?php
-
+    namespace Lib\Form;
     /**
-     * [model.interface.php]
+     * [Textfield.class.php]
      * @version 1.0.0
      * @author Christian Klauenbösch
      * @copyright Klauenbösch IT Services
@@ -10,8 +10,10 @@
      * previous     now     what changed
      *              1.0.0   -
      */
-    interface model {
-        public function __construct();
-        public function __desctruct();
+    class Textfield extends InputField {
+
+        public function __construct() {
+            $this->type = 'hidden';
+        }
     }
 ?>

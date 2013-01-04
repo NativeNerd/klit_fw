@@ -50,8 +50,10 @@
                 }
             }
             if (strtolower($stack[0]) == 'core') {
-                if (strtolower($stack[1]) == 'implement') {
+                if (strtolower($stack[1]) == 'interfaces') {
                     $ext = \Config\Constant::FILE_IMPLEMENTEXT;
+                } elseif (strtolower($stack[1]) == 'extendable') {
+                    $ext = \Config\Constant::FILE_ABSTRACTEXT;
                 } else {
                     $ext = \Config\Constant::FILE_COREEXT;
                 }

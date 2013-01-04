@@ -11,7 +11,7 @@
      *              1.0.0   -
      *
      */
-    class User extends \Core\Implement\model {
+    class User extends Core\Interfaces\Model {
         protected $Bean;
         protected $Query;
 

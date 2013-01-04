@@ -23,9 +23,12 @@
      *  $:variable      declared    Only in the own file
      *
      */
-    class Template implements \Core\Implement\lib {
+    class Template implements \Core\Interfaces\Lib {
         protected static $_instance = null;
         protected static $Bootstrap = null;
+
+        protected $Form;
+        protected $FormLastId;
         /**
          * Contains the origin given template dir
          * @var string
@@ -85,6 +88,12 @@
                 static::$_instance = new static();
             }
             return static::$_instance;
+        }
+
+        public function registerFormClass(\Lib\Form\Form $Form) {
+            $this->Form[$Form->getId()] = $Form;
+            $this->FormLastId = $Form->getId();
+            return true;
         }
 
         /**
@@ -275,7 +284,6 @@
             $regex_cs_end_short = \Config\Template::REGEXP_CS_ENDS;
             $regex_cs = $regex_cs_start . $regex_cs_mid . $regex_cs_end;
             $regex_cs_short = $regex_cs_start_short . $regex_cs_mid . $regex_cs_end_short;
-
             $count = 0; $count_short = 0;
             do {
                 // Search for control structure (multiline)
@@ -455,7 +463,7 @@
                     if (eval($code)) {
                         return $match[10];
                     } else {
-                        return null;
+                        return '';
                     }
                 } elseif (strlen($match[4]) == 0 AND strlen($match[8]) > 0) {
                     // Match a function
@@ -468,7 +476,7 @@
                     if ($if) {
                         return $match[10];
                     } else {
-                        return null;
+                        return '';
                     }
                 } else {
                     throw new \Core\Mexception('Bad match array');
@@ -527,13 +535,10 @@
              *  2. (ignore)
              *  3. (ignore)
              */
-            if (($Form = \Lib\Form\Form::getInstance()) === false) {
-                return null;
-            }
             if (isset($match[5])) {
-                return $Form->getElement($match[5], $match[1]);
+                return $this->Form[$match[1]]->getItem($match[5]);
             } else {
-                return $Form->getElement($match[1]);
+                return $this->Form[$this->FormLastId]->getItem($match[1]);
             }
         }
 
@@ -560,13 +565,10 @@
              *  4. (ignore)
              *  5. (ignore)
              */
-            if (($Form = \Lib\Form\Form::getInstance()) === false) {
-                return null;
-            }
             if (isset($match[5])) {
-                return $Form->getLabel($match[5], $match[1]);
+                return $this->Form[$match[1]]->getLabel($match[5]);
             } else {
-                return $Form->getLabel($match[1]);
+                return $this->Form[$this->FormLastId]->getLabel($match[1]);
             }
         }
 

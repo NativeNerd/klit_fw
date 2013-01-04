@@ -44,7 +44,7 @@
                 }
                 $class = '\Src\Controller\\'.ucfirst($uri['main']);
                 $Controller = new $class($this->Bootstrap);
-                if (!in_array('Core\Implement\controller', class_implements($Controller, false))) {
+                if (!in_array('Core\Interfaces\controller', class_implements($Controller, false))) {
                     throw new \Core\Mexception('Controller does not implement interface');
                 }
                 if (method_exists($Controller, $uri['action'])) {

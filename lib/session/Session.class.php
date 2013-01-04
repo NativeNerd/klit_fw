@@ -14,7 +14,7 @@
      *              1.0.0   -
      *
      */
-    class Session implements \Core\Implement\lib {
+    class Session implements \Core\Interfaces\Lib {
         protected static $_instance = null;
         protected static $Bootstrap = null;
         protected $Id;

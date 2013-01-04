@@ -15,7 +15,7 @@
      *              1.1.0   buildPath() now without $path (now $_unused)
      *
      */
-    class Helper implements \Core\Implement\lib {
+    class Helper implements \Core\Interfaces\Lib {
         protected static $_instance = null;
         protected static $Bootstrap = null;
 

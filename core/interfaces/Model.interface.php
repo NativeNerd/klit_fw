@@ -1,24 +1,17 @@
 <?php
-    namespace Core\Implement;
+    namespace Core\Interfaces;
     /**
-     * [controller.interface.php]
+     * [model.interface.php]
      * @version 1.0.0
      * @author Christian Klauenbösch
      * @copyright Klauenbösch IT Services
      * @link http://www.klit.ch
      *
-     * @desc Was it does
-     *
      * previous     now     what changed
      *              1.0.0   -
-     *
      */
-    interface controller {
+    interface model {
         public function __construct();
-        public function _before($uri);
-        public function _after($uri);
-        public function _fallback($uri);
         public function __desctruct();
     }
-
 ?>

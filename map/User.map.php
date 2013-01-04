@@ -11,7 +11,7 @@
      *              1.0.0   -
      *
      */
-    class User extends Core\Implement\map {
+    class User extends Core\Interfaces\map {
         protected $user_id;
         protected $user_lastlogin;
         protected $user_name;

@@ -13,7 +13,7 @@
      *              1.0.0   -
      *
      */
-    class Path implements \Core\Implement\lib {
+    class Path implements \Core\Interfaces\Lib {
         protected static $_instance = null;
         protected static $Bootstrap = null;
         protected $param;

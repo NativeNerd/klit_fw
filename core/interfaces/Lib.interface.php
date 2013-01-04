@@ -1,5 +1,5 @@
 <?php
-    namespace Core\Implement;
+    namespace Core\Interfaces;
     /**
      * [lib.class.php]
      * @version 1.0.0
@@ -13,7 +13,6 @@
      */
     interface lib {
         public function __construct();
-        public static function getInstance();
         public function __destruct();
     }
 

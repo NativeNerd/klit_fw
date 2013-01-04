@@ -20,7 +20,7 @@
      *          3.0.1   Error-Handling verbessert, Fehlernummer wird nun auch genutzt und behandelt
      *
      */
-    class MySQL extends \mysqli implements \Core\Implement\lib  {
+    class MySQL extends \mysqli implements \Core\Interfaces\Lib  {
         protected static $_instance = null;
         protected static $Bootstrap = null;
         /**

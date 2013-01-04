@@ -1,5 +1,5 @@
 <?php
-
+    namespace Core\Interfaces;
     /**
      * [map.interface.php]
      * @version 1.0.0

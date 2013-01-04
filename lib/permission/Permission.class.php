@@ -11,7 +11,7 @@
      *              1.0.0   -
      *
      */
-    class Permission implements \Core\Implement\lib {
+    class Permission implements \Core\Interfaces\Lib {
         protected static $_instance = null;
         protected static $Bootstrap = null;
 

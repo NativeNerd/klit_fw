@@ -32,7 +32,7 @@
      *  - Der Benutzer bekommt ein Result das er mit $Model->getResult() abrufen kann
      *      - Der Benutzer kann direkt mit $Model->getResult()->fetch_assoc() die Daten verarbeiten
      */
-    class Query implements \Core\Implement\lib {
+    class Query implements \Core\Interfaces\Lib {
         protected static $_instance = null;
         protected static $Bootstrap = null;
         /**

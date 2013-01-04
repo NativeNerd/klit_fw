@@ -13,7 +13,7 @@
      *
      *
      */
-    class Crypto implements \Core\Implement\lib {
+    class Crypto implements \Core\Interfaces\Lib {
         protected static $_instance = null;
         protected static $Bootstrap = null;
         protected $keyDir = 'keys';
