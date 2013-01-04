@@ -59,7 +59,7 @@
          * Contains the already called function
          * @var array
          */
-        protected $marker = array();
+        protected $marker;
         /**
          * Contains the actual table in the statement
          * @var string
@@ -125,15 +125,15 @@
             'fields' =>
                 array('values', 'join', 'where', 'using', 'order', 'limit', 'execute'),
             'values' =>
-                array('where', 'order', 'limit'),
+                array('where', 'order', 'limit', 'execute'),
             'where' =>
-                array('order', 'limit'),
+                array('where', 'order', 'limit', 'execute'),
             'join' =>
                 array('using'),
             'using' =>
-                array('order', 'limit'),
+                array('order', 'limit', 'execute'),
             'order' =>
-                array('limit'),
+                array('limit', 'execute'),
             );
 
         /**
@@ -181,9 +181,11 @@
          */
         public function __call($name, $argv) {
             if (in_array($name, $this->allowedCall, true)) {
-                if (!in_array($name, $this->allowedAfterward[end($this->marker)])
-                    AND count($this->marker) > 0) {
-                    throw new \Core\Mexception('Function '.$name.' is not allowed to be called here');
+                if (is_array($this->marker)) {
+                    if (!in_array($name, $this->allowedAfterward[end($this->marker)])
+                        AND count($this->marker) > 0) {
+                        throw new \Core\Mexception('Function '.$name.' is not allowed to be called here');
+                    }
                 }
                 if (($this->$name($argv)) === false) {
                     throw new \Core\Mexception('Function '.$name.' had an error');
