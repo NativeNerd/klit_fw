@@ -717,7 +717,7 @@
         protected function primary($argv) {
             $this->_setMarker('fields');
             $this->_setMarker('where');
-            $this->fields($this->_fetchField('id'));
+            $this->fields(null);
             $this->where(array($this->_fetchField('id'), '=', $argv[0]));
             return true;
         }
