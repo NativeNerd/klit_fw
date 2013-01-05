@@ -27,22 +27,22 @@
          *
          * @param MCRYPT-Cipher $cipher
          * @param MCRYPT-Mode $mode
-         * @throws Mexception
+         * @throws \Core\Mexception
          * @return boolean
          */
         public function __construct($cipher = MCRYPT_RIJNDAEL_128, $mode = MCRYPT_MODE_CFB) {
             if (extension_loaded('mcrypt')) {
-                throw new Mexception('Mcrypt not installed');
+                throw new \Core\Mexception('Mcrypt not installed');
             }
             if (in_array($cipher, mcrypt_list_algorithms())) {
                 $this->cipher = $cipher;
-            } else throw new Mexception('Cipher is not allowed.');
+            } else throw new \Core\Mexception('Cipher is not allowed.');
             if (in_array($mode, mcrypt_list_modes())) {
                 $this->mode = $mode;
-            } else throw new Mexception('Mode not allowed');
-            if (!class_exists('Helper'))
-                throw new Mexception('Class Helper not found');
-            $this->keyDir = Helper::buildPath($this->keyDir);
+            } else throw new \Core\Mexception('Mode not allowed');
+            if (!class_exists('\Lib\Helper\Helper'))
+                throw new \Core\Mexception('Class \Lib\Helper\Helper not found');
+            $this->keyDir = \Lib\Helper\Helper::buildPath($this->keyDir);
             return true;
         }
 
@@ -61,11 +61,11 @@
          *
          * @param string $iv
          * @return boolean
-         * @throws Mexception
+         * @throws \Core\Mexception
          */
         public function setIv($iv) {
             if (strlen($iv) != mcrypt_get_iv_size($this->cipher, $this->mode))
-                throw new Mexception('IV string not valid');
+                throw new \Core\Mexception('IV string not valid');
             else {
                 $this->iv = $iv;
                 return true;
@@ -123,11 +123,11 @@
          * Sets a key which is stored in a file
          *
          * @param string $filename
-         * @throws Mexception
+         * @throws \Core\Mexception
          */
         public function setKeyByFile($filename) {
             if (!file_exists($this->keyDir.$filename))
-                throw new Mexception('Key does not exist any more');
+                throw new \Core\Mexception('Key does not exist any more');
             $this->key = file_get_contents($this->keyDir.$filename);
         }
 
@@ -136,13 +136,13 @@
          *
          * @param string $readableText
          * @return string
-         * @throws Mexception
+         * @throws \Core\Mexception
          */
         public function encrypt($readableText) {
             if ($this->iv !== null AND $this->key !== null) {
                 return mcrypt_encrypt($this->cipher, $this->key, $readableText, $this->mode, $this->iv);
             } else
-                throw new Mexception('Not allowed');
+                throw new \Core\Mexception('Not allowed');
         }
 
         /**
@@ -151,13 +151,13 @@
          *
          * @param string $encryptedText
          * @return string
-         * @throws Mexception
+         * @throws \Core\Mexception
          */
         public function decrypt($encryptedText) {
             if ($this->iv AND $this->key) {
                 return mcrypt_decrypt($this->cipher, $this->key, $encryptedText, $this->mode, $this->iv);
             } else
-                throw new Mexception('Not allowed');
+                throw new \Core\Mexception('Not allowed');
         }
 
         public function __destruct() {

@@ -71,12 +71,14 @@
             if ($requireConfig) {
                 $config = max($stack);
                 $config = $stack[$config];
-                require_once self::buildPath(\Config\Constant::PATH_CONFIG . $config . \Config\Constant::FILE_CONFIGEXT);
+                $configPath = self::buildPath(\Config\Constant::PATH_CONFIG . $config . \Config\Constant::FILE_CONFIGEXT);
+                if ($configPath) require_once $configPath;
             }
             if ($requireMap) {
                 $config = max($stack);
                 $config = $stack[$config];
-                require_once self::buildPath(\Config\Constant::PATH_MAP . $config . \Config\Constant::FILE_MAPEXT);
+                $mapPath = self::buildPath(\Config\Constant::PATH_MAP . $config . \Config\Constant::FILE_MAPEXT);
+                if ($mapPath) require_once $mapPath;
             }
             require_once self::buildPath($file . $ext);
             return ;
