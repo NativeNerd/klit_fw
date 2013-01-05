@@ -3,6 +3,8 @@
     /**
      * ToDo (nach Priorität geordnet):
      *
+     * @todo Where-Bedingungen verschachteln
+     * @todo IN()
      * @todo Statement-Array noch intensiver strukturieren
      * @todo $allowedAfterwards kontrollieren
      * @todo Diverse Erweiterungen integrieren
@@ -33,8 +35,11 @@
      *      - Der Benutzer kann direkt mit $Model->getResult()->fetch_assoc() die Daten verarbeiten
      */
     class Query implements \Core\Interfaces\Lib {
+        /**
+         * Contains his own instance
+         * @var object Query
+         */
         protected static $_instance = null;
-        protected static $Bootstrap = null;
         /**
          * Containts Database-Object
          * @var object
@@ -157,10 +162,7 @@
             return ;
         }
 
-        public static function getInstance(\Core\Bootstrap $Bootstrap = null) {
-            if ($Bootstrap !== null) {
-                static::$Bootstrap = $Bootstrap;
-            }
+        public static function getInstance() {
             if (static::$_instance === null) {
                 static::$_instance = new static();
             }
@@ -868,7 +870,7 @@
          * @return mixed
          * @throws \Core\Mexception
          */
-        protected function execute() {
+        public function execute() {
             $type = null; $table = null; $fields = null; $values = null; $limit = null; $order = null;
             $join = null; $using = null; $where = null;
             // Parse query
