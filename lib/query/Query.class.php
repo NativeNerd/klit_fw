@@ -122,9 +122,9 @@
             'insert' =>
                 array('table'),
             'table' =>
-                array('join', 'values', 'fields', 'primary', 'null'),
+                array('join', 'values', 'fields', 'primary', 'null', 'where'),
             'primary' =>
-                array('join', 'where', 'using', 'order', 'limit', 'execute'),
+                array('fields', 'join', 'where', 'using', 'order', 'limit', 'execute'),
             'null' =>
                 array('join', 'where', 'using', 'order', 'limit', 'execute'),
             'fields' =>
@@ -181,19 +181,16 @@
          * @return \Model
          * @throws \Core\Mexception
          */
-        public function __call($name, $argv) {
+        public function _validateCall($name) {
             if (in_array($name, $this->allowedCall, true)) {
-                if (is_array($this->marker)) {
+                if (count($this->marker) > 0) {
                     if (!in_array($name, $this->allowedAfterward[end($this->marker)])
                         AND count($this->marker) > 0) {
                         throw new \Core\Mexception('Function '.$name.' is not allowed to be called here');
                     }
                 }
-                if (($this->$name($argv)) === false) {
-                    throw new \Core\Mexception('Function '.$name.' had an error');
-                }
                 $this->_setMarker($name);
-                return $this;
+                return true;
             } else {
                 throw new \Core\Mexception('Function '.$name.' is not allowed to access');
             }
@@ -415,9 +412,8 @@
         protected function _fetchField($field) {
             if (isset($this->info[$this->activeTable.'_'.$field])) {
                 return $this->activeTable.'_'.$field;
-            } else {
-                throw new \Core\Mexception('Unknown field');
             }
+            throw new \Core\Mexception('Unknown field');
         }
 
         /**
@@ -429,9 +425,8 @@
         protected function _isField($field) {
             if (isset($this->info[$field])) {
                 return true;
-            } else {
-                return false;
             }
+            return false;
         }
 
         /**
@@ -476,9 +471,8 @@
         protected function _callMarker($function) {
             if (in_array($function, $this->marker)) {
                 return true;
-            } else {
-                return false;
             }
+            return false;
         }
 
         /**
@@ -516,9 +510,8 @@
                 return $this->result;
             } elseif ($this->Database->errno == 0) {
                 return true;
-            } else {
-                return false;
             }
+            return false;
         }
 
         /**
@@ -529,9 +522,8 @@
         public function getError() {
             if ($this->Database->errno != 0) {
                 return $this->Database->errno;
-            } else {
-                return false;
             }
+            return false;
         }
 
         /**
@@ -625,10 +617,11 @@
          *
          * @return boolean
          */
-        protected function select() {
+        public function select() {
+            $this->_validateCall('select');
             $this->_reset();
             $this->_addElement('type', 'select');
-            return true;
+            return $this;
         }
 
         /**
@@ -636,10 +629,11 @@
          *
          * @return boolean
          */
-        protected function update() {
+        public function update() {
+            $this->_validateCall('update');
             $this->_reset();
             $this->_addElement('type', 'update');
-            return true;
+            return $this;
         }
 
         /**
@@ -647,10 +641,11 @@
          *
          * @return boolean
          */
-        protected function delete() {
+        public function delete() {
+            $this->_validateCall('delete');
             $this->_reset();
             $this->_addElement('type', 'delete');
-            return true;
+            return $this;
         }
 
         /**
@@ -658,10 +653,11 @@
          *
          * @return boolean
          */
-        protected function insert() {
+        public function insert() {
+            $this->_validateCall('insert');
             $this->_reset();
             $this->_addElement('type', 'insert');
-            return true;
+            return $this;
         }
 
         /**
@@ -671,14 +667,14 @@
          * @return boolean
          * @throws \Core\Mexception
          */
-        protected function join($argv) {
-            if (!isset($argv[1])) $argv[1] = 'inner';
-            elseif ($argv[1] != 'left' AND $argv[1] != 'right' AND $argv[1] != 'inner')
+        public function join($table, $type = 'inner') {
+            $this->_validateCall('join');
+            if ($type != 'left' AND $type != 'right' AND $type != 'inner')
                 throw new \Core\Mexception('Unknown join condition');
-            $this->activeTable = $argv[0];
-            $this->_fetchTableinfo($argv[0]);
-            $this->_addElement('join',  array('table'=>$argv[0], 'type'=>$argv[1]));
-            return true;
+            $this->activeTable = $table;
+            $this->_fetchTableinfo($table);
+            $this->_addElement('join',  array('table'=>$table, 'type'=>$type));
+            return $this;
         }
 
         /**
@@ -688,12 +684,13 @@
          * @return boolean
          * @throws \Core\Mexception
          */
-        protected function using($argv) {
-            if (!isset($this->info[$argv[0]])) {
+        public function using($using) {
+            $this->_validateCall('using');
+            if (!isset($this->info[$using])) {
                 throw new \Core\Mexception('Unknown column');
             } else {
-                $this->_addElement('using', $argv[0]);
-                return true;
+                $this->_addElement('using', $using);
+                return $this;
             }
         }
 
@@ -703,12 +700,12 @@
          * @param array $argv
          * @return boolean
          */
-        protected function table($argv) {
-            $this->_addElement('table', $argv[0]);
-            $this->activeTable = $argv[0];
-            // fetch tableinfo
-            $this->_fetchTableinfo($argv[0]);
-            return true;
+        public function table($table) {
+            $this->_validateCall('table');
+            $this->_addElement('table', $table);
+            $this->activeTable = $table;
+            $this->_fetchTableinfo($table);
+            return $this;
         }
 
         /**
@@ -718,12 +715,13 @@
          * @param array $argv
          * @return boolean
          */
-        protected function primary($argv) {
+        public function primary($onId) {
+            $this->_validateCall('primary');
+            $this->fields(array(null));
+            $this->where($this->_fetchField('id'), '=', $onId);
             $this->_setMarker('fields');
             $this->_setMarker('where');
-            $this->fields(null);
-            $this->where(array($this->_fetchField('id'), '=', $argv[0]));
-            return true;
+            return $this;
         }
 
         /**
@@ -732,10 +730,11 @@
          *
          * @param array $argv
          */
-        protected function null($argv) {
+        public function null() {
+            $this->_validateCall('null');
             $this->_setMarker('fields');
             $this->_addElement('fields',  1);
-            return true;
+            return $this;
         }
 
         /**
@@ -745,15 +744,14 @@
          * @param array $argv
          * @return boolean
          */
-        protected function fields($argv) {
-            if (is_array($argv[0])) {
-                $this->_addElement('fields', $argv[0]);
-            } elseif ($argv[0] !== null) {
-                $this->_addElement('fields', array($argv));
+        public function fields($fields) {
+            $this->_validateCall('fields');
+            if (count($fields) > 0 AND @$fields[0] !== null) {
+                $this->_addElement('fields', $fields);
             } else {
                 $this->_addElement('fields', null);
             }
-            return true;
+            return $this;
         }
 
         /**
@@ -762,15 +760,14 @@
          * @param array $argv
          * @return boolean
          */
-        protected function values($argv) {
-            if (is_array($argv[0])) {
-                $this->_addElement('values', $argv[0]);
-            } elseif ($argv !== null) {
-                $this->_addElement('values', array($argv));
+        public function values(array $values) {
+            $this->_validateCall('values');
+            if (count($values) > 0) {
+                $this->_addElement('values', $values);
             } else {
                 return false;
             }
-            return true;
+            return $this;
         }
 
         /**
@@ -784,25 +781,22 @@
          * @param array $argv
          * @return boolean
          */
-        protected function where($argv) {
-            //                                       field     operator  condition relation
+        public function where($onField, $operator, $comparisonValue, $relationToBefore = null) {
+            $this->_validateCall('where');
+            //                                       field     operator  comp.vl.  relation
             // $this->statement[]['where'][] = array($argv[0], $argv[1], $argv[2], $argv[3]);
 
-            if (!in_array($argv[1], $this->allowedOperators))   return false;
-            if (!$this->_isField($argv[0]))                    return false;
+            if (!in_array($operator, $this->allowedOperators))   return false;
+            if (!$this->_isField($onField))                      return false;
 
             // set a relation (like and, or, ...)
-            if (isset($argv[3])) {
-                if (!in_array(strtolower($argv[3]), $this->allowedRelations)) {
+            if ($relationToBefore !== null) {
+                if (!in_array(strtolower($relationToBefore), $this->allowedRelations)) {
                     return false;
                 }
-                $this->_addElement('where', array($argv[0], $argv[1], $argv[2], $argv[3]));
-                return true;
-            // or don't set a relation
-            } else {
-                $this->_addElement('where', array($argv[0], $argv[1], $argv[2], null));
-                return true;
             }
+            $this->_addElement('where', array($onField, $operator, $comparisonValue, $relationToBefore));
+            return $this;
         }
 
         /**
@@ -815,22 +809,14 @@
          * @return boolean
          * @throws \Core\Mexception
          */
-        protected function order($argv) {
-            if (isset($argv[1])) {
-                if (!in_array($argv[1], $this->allowedOrder) AND !isset($this->info[$argv[0]])) {
-                    $this->_addElement('order', array(array($argv[0], $argv[1])));
-                } else {
-                    throw new \Core\Mexception('Unknown order type/Unknown column');
-                }
+        public function order($onField, $order = 'asc') {
+            $this->_validateCall('order');
+            if (!in_array($order, $this->allowedOrder) AND !isset($this->info[$onField])) {
+                $this->_addElement('order', array($onField, $order));
             } else {
-                foreach ($argv[0] AS $value) {
-                    if (!in_array($value[1], $this->allowedOrder) OR !isset($this->info[$value[0]])) {
-                        throw new \Core\Mexception('Unknown order type/unknown column');
-                    }
-                }
-                $this->_addElement('order', $argv[0]);
+                throw new \Core\Mexception('Unknown order type/Unknown column');
             }
-            return true;
+            return $this;
         }
 
         /**
@@ -842,15 +828,15 @@
          * @param array $argv
          * @return boolean
          */
-        protected function limit($argv) {
-            if (!is_int($argv[0]) OR (isset($argv[1]) AND !is_int($argv[1]))) return false;
-
-            if (isset($argv[1])) {
-                $this->_addElement('limit', array(intval($argv[0]), intval($argv[1])));
-                return true;
+        public function limit($limit, $offset = null) {
+            $this->_validateCall('limit');
+            if (!is_int($limit) OR ($offset !== null AND !is_int($offset))) return false;
+            if ($offset !== null) {
+                $this->_addElement('limit', array(intval($limit), intval($offset)));
+                return $this;
             } else {
-                $this->_addElement('limit', intval($argv[0]));
-                return true;
+                $this->_addElement('limit', intval($limit));
+                return $this;
             }
         }
 
@@ -973,6 +959,9 @@
                 //      VALUES ([values])
                 $query = "INSERT INTO $table ($fields) VALUES ($values) ;";
             }
+
+            var_dump($query);
+
             // Throw query through database and give result back
             $this->result = $this->Database->query($query);
             return $this->result;
