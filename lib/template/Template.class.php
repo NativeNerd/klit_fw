@@ -24,8 +24,7 @@
      *
      */
     class Template implements \Core\Interfaces\Lib {
-        protected static $_instance = null;
-        protected static $Bootstrap = null;
+        protected static $Instance = array();
 
         protected $Form;
         protected $FormLastId;
@@ -58,7 +57,7 @@
          * Contains allowed if-Relations
          * @var array
          */
-        protected $allowedRelationsIf = array('<=', '>=', '==');
+        protected $allowedRelationsIf = array('<=', '>=', '==', '!=');
         /**
          * Contains a list of allowed functions
          * @var array
@@ -80,14 +79,11 @@
             }
         }
 
-        public static function getInstance(\Core\Bootstrap $Bootstrap = null) {
-            if ($Bootstrap !== null) {
-                static::$Bootstrap = $Bootstrap;
+        public static function getInstance($instanceName = 'null') {
+            if (!isset(static::$Instance[$instanceName])) {
+                static::$Instance[$instanceName] = new static();
             }
-            if (static::$_instance === null) {
-                static::$_instance = new static();
-            }
-            return static::$_instance;
+            return static::$Instance[$instanceName];
         }
 
         public function registerFormClass(\Lib\Form\Form $Form) {
@@ -446,25 +442,28 @@
                         $match[6] = true;
                     } elseif ($match[6] == 'false') {
                         $match[6] = false;
+                    } else {
+                        $match[6] = $this->getVariable(substr($match[6], 1), -1);
                     }
                     if (!in_array($match[5], $this->allowedRelationsIf)) {
                         throw new \Core\Mexception('Unknown relation');
                     }
                     $match[4] = $this->getVariable(substr($match[4], 1), -1);
-                    $match[6] = $this->getVariable(substr($match[6], 1), -1);
-                    $code = 'return ( "'
-                        .addslashes($match[4])
-                        .'" '
-                        .$match[5]
-                        .' "'
-                        .addslashes($match[6])
-                        .'" '
-                        .') ? true : false;';
-                    if (eval($code)) {
-                        return $match[10];
-                    } else {
-                        return '';
+                    switch ($match[5]) {
+                        case '==' :
+                            if ($match[4] == $match[6]) return $match[10];
+                            break;
+                        case '<=' :
+                            if ($match[4] <= $match[6]) return $match[10];
+                            break;
+                        case '>=' :
+                            if ($match[4] >= $match[6]) return $match[10];
+                            break;
+                        case '!=' :
+                            if ($match[4] != $match[6]) return $match[10];
+                            break;
                     }
+                    return '';
                 } elseif (strlen($match[4]) == 0 AND strlen($match[8]) > 0) {
                     // Match a function
                     if (!in_array($match[8], $this->allowedFunctionsIf)) {

@@ -48,7 +48,7 @@
             $this->Form = new \Lib\Form\Form();
             $this->Form->setId('login');
             $this->Form->usePost();
-            $this->Form->setAction('index.php?main=index&action=login');
+            $this->Form->setAction('index.php?main=index&action=show');
 
             $Username = new \Lib\Form\Textfield();
             $Username->setName('username');
@@ -63,7 +63,7 @@
             $Gender_Male->setValue('Mann');
             $Gender->registerOption($Gender_Male);
 
-            $Gender_Female = new \Lib\Form\Option();
+            $Gender_Female = clone $Gender_Male;
             $Gender_Female->setName('female');
             $Gender_Female->setValue('Frau');
             $Gender_Female->setSelected();
@@ -81,6 +81,26 @@
             $Gender_Label->assignTo('gender');
             $Gender_Label->setValue('Geschlecht:');
 
+            $Age = new \Lib\Form\Select();
+            $Age->setName('age');
+            $Age->setSize(2);
+            $Age_G1 = new \Lib\Form\OptionGroup('10 to 20');
+            $Age->registerOptionGroup($Age_G1);
+            $Age_G1_10 = new \Lib\Form\Option('age_10', '10 years');
+            $Age_G1->registerOption($Age_G1_10);
+            $Age_G1_11 = new \Lib\Form\Option('age_11', '11 years');
+            $Age_G1->registerOption($Age_G1_11);
+            $Age_G2 = new \Lib\Form\OptionGroup('21 to 30');
+            $Age->registerOptionGroup($Age_G2);
+            $Age_G2_21 = new \Lib\Form\Option('age_21', '21 years');
+            $Age_G2->registerOption($Age_G2_21);
+            $Age_G2_22 = new \Lib\Form\Option('age_22', '22 years');
+            $Age_G2->registerOption($Age_G2_22);
+
+            $Age_Label = new \Lib\Form\Label();
+            $Age_Label->assignTo('age');
+            $Age_Label->setValue('Alter:');
+
             $Submit = new \Lib\Form\Button();
             $Submit->setName('submit');
             $Submit->setValue('Absenden');
@@ -92,11 +112,17 @@
             $this->Form->registerLabel($Password_Label);
             $this->Form->registerLabel($Gender_Label);
             $this->Form->registerInput($Submit);
+            $this->Form->registerSelect($Age);
+            $this->Form->registerLabel($Age_Label);
+
+            $this->Form->fill();
+
             $this->Template->registerFormClass($this->Form);
             return ;
         }
 
         public function show($uri) {
+            $this->Query->update()->table('user')->fields('user_name')->values('Neuer Name')->where('user_id', '=', 1)->execute();
             $this->_loginForm();
             $this->Template->open('index/index.tpl');
             $this->Template->show();

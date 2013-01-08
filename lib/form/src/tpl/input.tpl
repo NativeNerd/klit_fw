@@ -3,8 +3,8 @@
     type="{$type}"
     name="{$name}"
     {if. haslength($value)} value="{$value}"
-    {$readonly}
-    {$maxlength}
-    {$disabled}
-    {$checked}
+    {if. $readonly==true} readonly="readonly"
+    {if. haslength($maxlength)} maxlength="{$maxlength}"
+    {if. $disabled==true} disabled="disabled"
+    {if. $checked==true} checked="checked"
 />

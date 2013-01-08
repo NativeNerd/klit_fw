@@ -11,9 +11,16 @@
      *              1.0.0   -
      */
     class Passwordfield extends InputField {
-
         public function __construct() {
             $this->type = 'password';
+        }
+
+        /**
+         * A passwordfield could not filled with get or post values
+         * @return (null)
+         */
+        public function fill() {
+            return ;
         }
     }
 ?>

@@ -45,11 +45,21 @@
         }
 
         public function save() {
+            return ;
+        }
 
+        public function check() {
+            return ;
         }
 
         public function fill() {
-
+            foreach ($this->Selects AS $Select) {
+                $Select->fill($this->Header->getMethod());
+            }
+            foreach ($this->InputFields AS $InputField) {
+                $InputField->fill($this->Header->getMethod());
+            }
+            return true;
         }
 
         public function setAction($action) {
@@ -113,7 +123,7 @@
         }
 
         public function __destruct() {
-
+            return ;
         }
     }
 ?>

@@ -13,8 +13,19 @@
      */
     class Button extends InputField {
 
-        public function __construct() {
-            $this->type = 'submit';
+        public function __construct($type = 'submit') {
+            if ($type == 'submit') {
+                $this->type = 'submit';
+            } elseif ($type == 'reset') {
+                $this->type = 'reset';
+            } else {
+                $this->type = 'button';
+            }
+            $this->tpl_name = 'button.tpl';
+        }
+
+        public function fill($method) {
+            return true;
         }
     }
 

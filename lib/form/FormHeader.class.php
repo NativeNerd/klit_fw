@@ -31,6 +31,10 @@
             return true;
         }
 
+        public function getMethod() {
+            return $this->method;
+        }
+
         public function setHash($hash) {
             $this->Hidden = new Hidden();
             $this->Hidden->setName('formId');

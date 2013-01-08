@@ -13,7 +13,6 @@
      */
     class InputField {
         protected $Template;
-
         protected $type;
         protected $id;
         protected $name;
@@ -23,11 +22,17 @@
         protected $readonly;
         protected $maxlength;
         protected $regex;
+        protected $tpl_name = 'input.tpl';
 
         public function __construct() {
             if (strstr(get_called_class(), 'InputField')) {
                 throw new \Core\Mexception('InputField is not allowed to be called directly');
             }
+        }
+
+        public function __clone() {
+            $this->name = null;
+            $this->value = null;
         }
 
         public function setId($id) {
@@ -81,9 +86,20 @@
             return false;
         }
 
+        public function fill($method) {
+            if ($method == 'GET') {
+                $req = $_GET;
+            } else {
+                $req = $_POST;
+            }
+            if (isset($req[$this->name])) {
+                $this->value = htmlentities($req[$this->name]);
+            }
+        }
+
         public function __toString() {
             $this->Template = new \Lib\Template\Template();
-            $this->Template->open(\Config\Form::TPL_PATH . 'input.tpl');
+            $this->Template->open(\Config\Form::TPL_PATH . $this->tpl_name);
             $this->Template->assign('id', $this->id);
             $this->Template->assign('type', $this->type);
             $this->Template->assign('name', $this->name);
@@ -92,8 +108,7 @@
             $this->Template->assign('disabled', $this->disabled);
             $this->Template->assign('readonly', $this->readonly);
             $this->Template->assign('maxlength', $this->maxlength);
-            $string =  $this->Template->parse();
-            $string = preg_replace('/\s{2,}/sm', ' ', $string);
+            $string = preg_replace('/\s{2,}/sm', ' ', $this->Template->parse());
             return $string;
         }
     }

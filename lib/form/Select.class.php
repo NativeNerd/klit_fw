@@ -10,7 +10,7 @@
      * previous     now     what changed
      *              1.0.0   -
      */
-    class Select extends InputField {
+    class Select {
         protected $Template;
         protected $id;
         protected $optiongroups;
@@ -18,6 +18,7 @@
         protected $disabled = false;
         protected $multiple = false;
         protected $size = false;
+        protected $hasSelected = false;
 
         public function setId($id) {
             $this->id = $id;
@@ -35,7 +36,7 @@
             if ($this->disabled)
                 $this->disabled = false;
             else
-                $this->disabled = \Config\Form::VALUE_DISABLED;
+                $this->disabled = true;
             return true;
         }
 
@@ -43,7 +44,7 @@
             if ($this->multiple)
                 $this->multiple = false;
             else
-                $this->multiple = \Config\Form::VALUE_MULTIPLE;
+                $this->multiple = true;
             return true;
         }
 
@@ -59,6 +60,46 @@
             $this->options[] = $option;
         }
 
+        public function fill($method) {
+            /** @todo Possibly have more than one selected option :S */
+            if ($method == 'GET') $req = $_GET;
+            else $req = $_POST;
+            if (isset($req[$this->name])) {
+                if (is_object(($return = $this->fillHelper($method)))) {
+                    $this->fillHelper($method, 'unselect');
+                    $return->setSelected();
+                }
+            }
+            return true;
+        }
+
+        protected function fillHelper($method, $option = 'search') {
+            if ($option != 'unselect' AND $option != 'search') {
+                $option = 'search';
+            }
+            if (is_array($this->optiongroups)) {
+                foreach ($this->optiongroups AS $OptionGroup) {
+                    if ($option == 'unselect') {
+                        $OptionGroup->unselectAll();
+                    } elseif (($Option = $OptionGroup->fill($this->name, $method))) {
+                        $this->hasSelected = true;
+                        return $Option;
+                    }
+                }
+            }
+            if (is_array($this->options)) {
+                foreach ($this->options AS $Option) {
+                    if ($option == 'unselect') {
+                        $Option->setSelected(true);
+                    } elseif ($Option->fill($this->name, $method)) {
+                        $this->hasSelected = true;
+                        return $Option;
+                    }
+                }
+            }
+            return true;
+        }
+
         public function __toString() {
             $this->Template = new \Lib\Template\Template();
             $this->Template->open(\Config\Form::TPL_PATH . 'selectHeader.tpl');
@@ -67,8 +108,11 @@
             $this->Template->assign('disabled', $this->disabled);
             $this->Template->assign('multiple', $this->multiple);
             $this->Template->assign('size', $this->size);
+            $this->Template->assign('hasSelected', $this->hasSelected);
+
             $header =  $this->Template->parse();
             $header = preg_replace('/\s{2,}/sm', ' ', $header);
+
             $footer = $this->Template->parseSimple(\Config\Form::TPL_PATH . 'selectFooter.tpl');
             $body = '';
             if (is_array($this->optiongroups)) {

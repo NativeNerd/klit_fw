@@ -15,12 +15,34 @@
         protected $groupName = false;
         protected $options;
 
-        public function __construct($groupName) {
+        public function __construct($groupName = null) {
+            $this->groupName = $groupName;
+        }
+
+        public function setGroupName($groupName) {
             $this->groupName = $groupName;
         }
 
         public function registerOption(Option $option) {
             $this->options[] = $option;
+        }
+
+        public function fill($selectName, $method) {
+            if (is_array($this->options)) {
+                foreach ($this->options AS $Option) {
+                    if ($Option->fill($selectName, $method)) {
+                        return $Option;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public function unselectAll() {
+            foreach ($this->options AS $Option) {
+                $Option->setSelected(true);
+            }
+            return true;
         }
 
         public function __toString() {

@@ -746,10 +746,12 @@
          */
         public function fields($fields) {
             $this->_validateCall('fields');
-            if (count($fields) > 0 AND @$fields[0] !== null) {
+            if (is_array($fields) AND count($fields) > 0) {
                 $this->_addElement('fields', $fields);
-            } else {
+            } elseif ($fields === null) {
                 $this->_addElement('fields', null);
+            } else {
+                $this->_addElement('fields', array($fields));
             }
             return $this;
         }
@@ -760,12 +762,12 @@
          * @param array $argv
          * @return boolean
          */
-        public function values(array $values) {
+        public function values($values) {
             $this->_validateCall('values');
-            if (count($values) > 0) {
+            if (is_array($values) > 0 AND count($values) > 0) {
                 $this->_addElement('values', $values);
             } else {
-                return false;
+                $this->_addElement('values', array($values));
             }
             return $this;
         }
@@ -959,9 +961,6 @@
                 //      VALUES ([values])
                 $query = "INSERT INTO $table ($fields) VALUES ($values) ;";
             }
-
-            var_dump($query);
-
             // Throw query through database and give result back
             $this->result = $this->Database->query($query);
             return $this->result;

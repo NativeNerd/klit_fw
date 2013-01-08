@@ -12,12 +12,23 @@
      */
     class Option {
         protected $Template;
-        protected $id = false;
-        protected $selected = false;
-        protected $disabled = false;
-        protected $label = false;
-        protected $name = false;
-        protected $value = false;
+        protected $id;
+        protected $selected;
+        protected $disabled;
+        protected $label;
+        protected $name;
+        protected $value;
+
+        public function __construct($name = null, $value = null) {
+            $this->name = $name;
+            $this->value = $value;
+        }
+
+        public function __clone() {
+            $this->name = null;
+            $this->value = null;
+            $this->label = null;
+        }
 
         public function setId($id) {
             $this->id = $id;
@@ -28,11 +39,15 @@
             return true;
         }
 
-        public function setSelected() {
+        public function setSelected($forceFalse = false) {
+            if ($forceFalse) {
+                $this->selected = false;
+                return true;
+            }
             if ($this->selected)
                 $this->selected = false;
             else
-                $this->selected = \Config\Form::VALUE_SELECTED;
+                $this->selected = true;
             return true;
         }
 
@@ -40,7 +55,7 @@
             if ($this->disabled)
                 $this->disabled = false;
             else
-                $this->disabled = \Config\Form::VALUE_DISABLED;
+                $this->disabled = true;
             return true;
         }
 
@@ -56,6 +71,19 @@
             $this->name = $name;
         }
 
+        public function fill($selectName, $method) {
+            if ($method == 'GET') {
+                $req = $_GET;
+            } else {
+                $req = $_POST;
+            }
+            if ($req[$selectName] == $this->name) {
+                $this->setSelected();
+                return true;
+            }
+            return false;
+        }
+
         public function __toString() {
             $this->Template = new \Lib\Template\Template();
             $this->Template->open(\Config\Form::TPL_PATH . 'option.tpl');
@@ -65,8 +93,7 @@
             $this->Template->assign('label', $this->label);
             $this->Template->assign('disabled', $this->disabled);
             $this->Template->assign('selected', $this->selected);
-            $string =  $this->Template->parse();
-            $string = preg_replace('/\s{2,}/sm', ' ', $string);
+            $string = preg_replace('/\s{2,}/sm', ' ', $this->Template->parse());
             return $string;
         }
     }

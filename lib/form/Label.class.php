@@ -17,6 +17,11 @@
         protected $for;
         protected $value;
 
+        public function __clone() {
+            $this->for = null;
+            $this->value = null;
+        }
+
         public function assignTo($to) {
             $this->for = $to;
             return true;

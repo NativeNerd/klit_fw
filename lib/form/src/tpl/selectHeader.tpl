@@ -1,4 +1,5 @@
 <select name="{$name}"
-    {$disabled}
+    {if. $disabled==true} disabled="disabled"
     {if. haslength($size)}size="{$size}"
-    {$multiple}>
+    {if. $multiple==true} multiple="multiple"
+    >
