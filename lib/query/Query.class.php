@@ -136,7 +136,7 @@
             'join' =>
                 array('using'),
             'using' =>
-                array('order', 'limit', 'execute'),
+                array('where', 'order', 'limit', 'execute'),
             'order' =>
                 array('limit', 'execute'),
             );
