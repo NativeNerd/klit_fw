@@ -16,6 +16,10 @@
             $this->type = 'checkbox';
         }
 
+        /**
+         * Marks checkbox as checked
+         * trigger function
+         */
         public function check() {
             if ($this->checked)
                 $this->checked = false;

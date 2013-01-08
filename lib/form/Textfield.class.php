@@ -11,7 +11,6 @@
      *              1.0.0   -
      */
     class Textfield extends InputField {
-
         public function __construct() {
             $this->type = 'text';
         }

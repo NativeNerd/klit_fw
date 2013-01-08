@@ -24,6 +24,11 @@
             $this->tpl_name = 'button.tpl';
         }
 
+        /**
+         * In Button class not avaible
+         * @param string $method
+         * @return boolean
+         */
         public function fill($method) {
             return true;
         }

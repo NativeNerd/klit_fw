@@ -11,27 +11,75 @@
      *              1.0.0   -
      */
     class Select {
+        /**
+         * contains template object
+         * @var \Lib\Template\Template
+         */
         protected $Template;
+        /**
+         * contains id attribute
+         * @var string
+         */
         protected $id;
+        /**
+         * contains OptionGroup objects
+         * @var array
+         */
         protected $optiongroups;
+        /**
+         * contains Option objects
+         * @var array
+         */
         protected $options;
+        /**
+         * marked if select is disabled
+         * @var boolean
+         */
         protected $disabled = false;
+        /**
+         * marked if multiple selects are possible
+         * @var boolean
+         */
         protected $multiple = false;
+        /**
+         * contains size of select
+         * @var int
+         */
         protected $size = false;
+        /**
+         * triggered, if select has a selected option
+         * @var boolean
+         */
         protected $hasSelected = false;
 
+        /**
+         * set id atribute
+         * @param string $id
+         */
         public function setId($id) {
             $this->id = $id;
         }
 
+        /**
+         * set name attribute of select
+         * @param  string $name
+         */
         public function setName($name) {
             $this->name = $name;
         }
 
+        /**
+         * get name attribute
+         * @return string
+         */
         public function getName() {
             return $this->name;
         }
 
+        /**
+         * disable select, trigger
+         * @return boolean
+         */
         public function disable() {
             if ($this->disabled)
                 $this->disabled = false;
@@ -40,6 +88,10 @@
             return true;
         }
 
+        /**
+         * active multiple selects, trigger
+         * @return boolean
+         */
         public function setMultiple() {
             if ($this->multiple)
                 $this->multiple = false;
@@ -48,18 +100,35 @@
             return true;
         }
 
+        /**
+         * sets displayed size of select
+         * @param int $size
+         */
         public function setSize($size) {
             $this->size = (int)$size;
         }
 
+        /**
+         * register OptionGroup object
+         * @param \Lib\Form\OptionGroup $optionGroup
+         */
         public function registerOptionGroup(OptionGroup $optionGroup) {
             $this->optiongroups[] = $optionGroup;
         }
 
+        /**
+         * register Option object
+         * @param \Lib\Form\Option $option
+         */
         public function registerOption(Option $option) {
             $this->options[] = $option;
         }
 
+        /**
+         * does select sent option
+         * @param string $method
+         * @return boolean
+         */
         public function fill($method) {
             /** @todo Possibly have more than one selected option :S */
             if ($method == 'GET') $req = $_GET;
@@ -73,6 +142,13 @@
             return true;
         }
 
+        /**
+         * searchs all options whether one is selected
+         * if option==unselect, unselects all options
+         * @param string $method
+         * @param string $option
+         * @return boolean
+         */
         protected function fillHelper($method, $option = 'search') {
             if ($option != 'unselect' AND $option != 'search') {
                 $option = 'search';

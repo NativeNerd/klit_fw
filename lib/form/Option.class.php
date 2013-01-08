@@ -11,34 +11,85 @@
      *              1.0.0   -
      */
     class Option {
+        /**
+         * contains template object
+         * @var \Lib\Template\Template
+         */
         protected $Template;
+        /**
+         * contains id of option
+         * @var string
+         */
         protected $id;
+        /**
+         * marked if selected
+         * @var boolean
+         */
         protected $selected;
+        /**
+         * marked if disabled
+         * @var boolean
+         */
         protected $disabled;
+        /**
+         * contains label attribute
+         * @var string
+         */
         protected $label;
+        /**
+         * contains name attribute
+         * @var string
+         */
         protected $name;
+        /**
+         * contains text value
+         * @var string
+         */
         protected $value;
 
+        /**
+         * Initializes class
+         * @param string $name
+         * @param string $value
+         */
         public function __construct($name = null, $value = null) {
             $this->name = $name;
             $this->value = $value;
         }
 
+        /**
+         * called after clone
+         */
         public function __clone() {
             $this->name = null;
             $this->value = null;
             $this->label = null;
         }
 
+        /**
+         * set id attribute
+         * @param string $id
+         */
         public function setId($id) {
             $this->id = $id;
         }
 
+        /**
+         * Assign option to group
+         * @param \Lib\Form\OptionGroup $group
+         * @return boolean
+         */
         public function assignToGroup(OptionGroup $group) {
             $group->registerOption($this);
             return true;
         }
 
+        /**
+         * mark as selected, trigger
+         * if $forceFalse = true, selected always gets true
+         * @param boolean $forceFalse
+         * @return boolean
+         */
         public function setSelected($forceFalse = false) {
             if ($forceFalse) {
                 $this->selected = false;
@@ -51,6 +102,10 @@
             return true;
         }
 
+        /**
+         * mark as disabled, trigger
+         * @return boolean
+         */
         public function disable() {
             if ($this->disabled)
                 $this->disabled = false;
@@ -59,18 +114,36 @@
             return true;
         }
 
+        /**
+         * Set label attribute
+         * @param string $label
+         */
         public function setLabel($label) {
             $this->label = $label;
         }
 
+        /**
+         * set option value
+         * @param string $value
+         */
         public function setValue($value) {
             $this->value = $value;
         }
 
+        /**
+         * set displayed text
+         * @param string $name
+         */
         public function setName($name) {
             $this->name = $name;
         }
 
+        /**
+         * checks whether this option is sent by request
+         * @param string $selectName
+         * @param string $method
+         * @return boolean
+         */
         public function fill($selectName, $method) {
             if ($method == 'GET') {
                 $req = $_GET;

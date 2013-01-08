@@ -16,7 +16,7 @@
         }
 
         /**
-         * A passwordfield could not filled with get or post values
+         * A passwordfield could not filled with request values
          * @return (null)
          */
         public function fill() {

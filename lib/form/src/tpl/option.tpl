@@ -1,7 +1,7 @@
 <option
     {if. haslength($id)} id="{$id}"
-    value="{$name}"
+    value="{$value}"
     {if. haslength($label)} label="{$label}"
     {if. $disabled==true} disabled="disabled"
     {if. $selected==true} selected="selected"
-    >{$value}</option>
+    >{$name}</option>

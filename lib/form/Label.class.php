@@ -12,25 +12,53 @@
      *
      */
     class Label {
+        /**
+         * Contains template object
+         * @var \Lib\Template\Template
+         */
         protected $Template;
-
+        /**
+         * Contains attribute for
+         * @var string
+         */
         protected $for;
+        /**
+         * contains label value
+         * @var string
+         */
         protected $value;
 
+        /**
+         * called after clone
+         */
         public function __clone() {
             $this->for = null;
             $this->value = null;
         }
 
+        /**
+         * set for attribute
+         * @param string $to
+         * @return boolean
+         */
         public function assignTo($to) {
             $this->for = $to;
             return true;
         }
 
+        /**
+         * get for attribute
+         * @return string
+         */
         public function getAssignedTo() {
             return $this->for;
         }
 
+        /**
+         * set label value
+         * @param string $value
+         * @return boolean
+         */
         public function setValue($value) {
             $this->value = $value;
             return true;
