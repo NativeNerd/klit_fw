@@ -13,6 +13,7 @@
     /**
      * [Query.class.php]
      * @version 2.0.0
+     * @revision 01
      * @author Christian Klauenbösch
      * @copyright Klauenbösch IT Services
      * @link http://www.klit.ch
@@ -86,8 +87,10 @@
             'fields',
             'values',
             'where',
+            'in',
             'join',
             'using',
+            'on',
             'order',
             'limit',
             'execute'
@@ -122,21 +125,25 @@
             'insert' =>
                 array('table'),
             'table' =>
-                array('join', 'values', 'fields', 'primary', 'null', 'where'),
+                array('join', 'values', 'fields', 'primary', 'null', 'where', 'in'),
             'primary' =>
                 array('fields', 'join', 'where', 'using', 'order', 'limit', 'execute'),
             'null' =>
-                array('join', 'where', 'using', 'order', 'limit', 'execute'),
+                array('join', 'where', 'using', 'order', 'limit', 'execute', 'in'),
             'fields' =>
-                array('values', 'join', 'where', 'using', 'order', 'limit', 'execute'),
+                array('values', 'join', 'where', 'using', 'order', 'limit', 'execute', 'in'),
             'values' =>
-                array('where', 'order', 'limit', 'execute'),
+                array('where', 'order', 'limit', 'execute', 'in'),
             'where' =>
-                array('where', 'order', 'limit', 'execute'),
+                array('where', 'order', 'limit', 'execute', 'in'),
+            'in' =>
+                array('where', 'in', 'order', 'limit', 'execute'),
             'join' =>
-                array('using'),
+                array('using', 'on'),
             'using' =>
-                array('where', 'order', 'limit', 'execute'),
+                array('where', 'order', 'limit', 'execute', 'in'),
+            'on' =>
+                array('where', 'order', 'limit', 'execute', 'in'),
             'order' =>
                 array('limit', 'execute'),
             );
@@ -184,16 +191,14 @@
         public function _validateCall($name) {
             if (in_array($name, $this->allowedCall, true)) {
                 if (count($this->marker) > 0) {
-                    if (!in_array($name, $this->allowedAfterward[end($this->marker)])
-                        AND count($this->marker) > 0) {
+                    if (!in_array($name, $this->allowedAfterward[end($this->marker)])) {
                         throw new \Core\Mexception('Function '.$name.' is not allowed to be called here');
                     }
                 }
                 $this->_setMarker($name);
                 return true;
-            } else {
-                throw new \Core\Mexception('Function '.$name.' is not allowed to access');
             }
+            throw new \Core\Mexception('Function '.$name.' is not allowed to access');
         }
 
         /**
@@ -688,10 +693,18 @@
             $this->_validateCall('using');
             if (!isset($this->info[$using])) {
                 throw new \Core\Mexception('Unknown column');
-            } else {
-                $this->_addElement('using', $using);
-                return $this;
             }
+            $this->_addElement('using', $using);
+            return $this;
+        }
+
+        public function on($left, $right) {
+            $this->_validateCall('on');
+            if (!isset($this->info[$left]) OR !isset($this->info[$right])) {
+                throw new \Core\Mexception('Unknown column');
+            }
+            $this->_addElement('on', array($left, $right));
+            return $this;
         }
 
         /**
@@ -783,8 +796,14 @@
          * @param array $argv
          * @return boolean
          */
-        public function where($onField, $operator, $comparisonValue, $relationToBefore = null) {
+        public function where($onField, $operator = null, $comparisonValue = null, $relationToBefore = null) {
             $this->_validateCall('where');
+
+            if ($onField === null) {
+                $this->allowedAfterwardOnly = 'in';
+                return $this;
+            }
+
             //                                       field     operator  comp.vl.  relation
             // $this->statement[]['where'][] = array($argv[0], $argv[1], $argv[2], $argv[3]);
 
@@ -797,7 +816,15 @@
                     return false;
                 }
             }
-            $this->_addElement('where', array($onField, $operator, $comparisonValue, $relationToBefore));
+            $this->_addElement('where', array($onField, $operator, $comparisonValue, $relationToBefore, null));
+            return $this;
+        }
+
+        public function in($onField, array $arrayOfIn, $negate = false, $relationToBefore = null) {
+            $this->_validateCall('in');
+            if (!$this->_isField($onField)) return false;
+
+            $this->_addElement('where', array($onField, $negate, null, $relationToBefore, $arrayOfIn));
             return $this;
         }
 
@@ -860,7 +887,7 @@
          */
         public function execute() {
             $type = null; $table = null; $fields = null; $values = null; $limit = null; $order = null;
-            $join = null; $using = null; $where = null;
+            $join = null; $using = null; $where = null; $on = null;
             // Parse query
             foreach ($this->statement AS $value) {
                 switch ($value['type']) {
@@ -891,6 +918,9 @@
                     case 'using' :
                         $using[] = $this->parseUsing($value['value']);
                         break;
+                    case 'on' :
+                        $on[] = $this->parseOn($value['value']);
+                        break;
                     default :
                         throw new \Core\Mexception('Unknown Type '.$value['type']);
                 }
@@ -914,7 +944,16 @@
                     $tmp .= $key.' '.$value;
                 }
                 $join = $tmp;
-            unset($tmp);
+                unset($tmp);
+            }
+            if (is_array($join) AND is_array($on)) {
+                $join = array_combine($join, $using);
+                $tmp = '';
+                foreach ($jon AS $key=> $value) {
+                    $tmp .= $key . ' ' . $value;
+                }
+                $join = $tmp;
+                unset($tmp);
             }
 
             if ($type == 'SELECT') {
@@ -962,6 +1001,7 @@
                 $query = "INSERT INTO $table ($fields) VALUES ($values) ;";
             }
             // Throw query through database and give result back
+            var_dump($query);
             $this->result = $this->Database->query($query);
             return $this->result;
         }
@@ -1095,11 +1135,12 @@
          * @throws \Core\Mexception
          */
         protected function parseWhere($where) {
-            //                                       field     operator  condition relation
-            // $this->statement[]['where'][] = array($argv[0], $argv[1], $argv[2], $argv[3]);
+            //                                       field     operator  condition relation  in()
+            // $this->statement[]['where'][] = array($argv[0], $argv[1], $argv[2], $argv[3], $argv[4]);
 
             // fetch where conditions
-            if (strlen($where[3]) == 0) {
+            if (strlen($where[3]) == 0 AND !is_array($where[4])) {
+                // No relation
                 return 'WHERE '.
                         '`'.
                         $where[0].
@@ -1110,7 +1151,8 @@
                         $this->_notationByType(
                             $this->_ensureByType($where[2], $this->info[$where[0]]['type']),
                             $this->info[$where[0]]['type']);
-            } else {
+            } elseif (!is_array($where[4])) {
+                // with relation
                 return ' '.
                         $where[3].
                         ' '.
@@ -1123,6 +1165,22 @@
                         $this->_notationByType(
                             $this->_ensureByType($where[2], $this->info[$where[0]]['type']),
                             $this->info[$where[0]]['type']);
+            } else {
+                // an in()
+                if (strlen($where[3]) > 0) $in = ' '.$where[3];
+                else $in = 'WHERE ';
+                $in .= '`'.$where[0].'`';
+                if ($where[1] == true) $in .= ' NOT ';
+                $in .= ' IN(';
+                $count = count($where[4]);
+                foreach ($where[4] AS $value) {
+                    $in .= $this->_notationByType(
+                        $this->_ensureByType($value, $this->info[$where[0]]['type']),
+                        $this->info[$where[0]]['type']);
+                    if (--$count != 0) $in .= ', ';
+                }
+                $in .= ')';
+                return $in;
             }
         }
 
@@ -1177,6 +1235,10 @@
          */
         protected function parseUsing($using) {
             return ('USING(`'.$using.'`)');
+        }
+
+        protected function parseOn($on) {
+            return ('ON (`'.$on[0].'` = `'.$on[1].'`)');
         }
     }
 ?>

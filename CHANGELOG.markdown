@@ -1,6 +1,6 @@
 # KLIT FRAMEWORK CHANGELOG
 
-## Version 0.1
+## Version 1.0
 <table>
     <tr>
         <th>File</th>
@@ -9,9 +9,12 @@
         <th>What changed</th>
     </tr>
     <tr>
-        <th>index.controller.php</th>
+        <th>\Lib\Query\Query.class.php</th>
         <td>1.0.0</td>
-        <td>1</td>
-        <td>Nothing really changed</td>
+        <td>01</td>
+        <td>
+            added ON() statement<br />
+            added IN() statement<br />
+        </td>
     </tr>
 </table>
