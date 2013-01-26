@@ -3,6 +3,7 @@
     /**
      * [MySQL.class.php]
      * @version 3.0.1
+     * @revision 01
      * @author Christian Klauenbösch
      * @copyright Klauenbösch IT Services
      * @link http://www.klit.ch
@@ -22,7 +23,6 @@
      */
     class MySQL extends \mysqli implements \Core\Interfaces\Lib  {
         protected static $_instance = null;
-        protected static $Bootstrap = null;
         /**
          * Contains the last result object of a single query
          * @var object
@@ -50,10 +50,7 @@
             return ;
         }
 
-        public static function getInstance(\Core\Bootstrap $Bootstrap = null) {
-            if ($Bootstrap !== null) {
-                static::$Bootstrap = $Bootstrap;
-            }
+        public static function getInstance() {
             if (static::$_instance === null) {
                 static::$_instance = new static();
             }

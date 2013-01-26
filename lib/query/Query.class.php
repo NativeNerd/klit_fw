@@ -13,7 +13,7 @@
     /**
      * [Query.class.php]
      * @version 2.0.0
-     * @revision 01
+     * @revision 02
      * @author Christian Klauenbösch
      * @copyright Klauenbösch IT Services
      * @link http://www.klit.ch
@@ -36,11 +36,6 @@
      *      - Der Benutzer kann direkt mit $Model->getResult()->fetch_assoc() die Daten verarbeiten
      */
     class Query implements \Core\Interfaces\Lib {
-        /**
-         * Contains his own instance
-         * @var object Query
-         */
-        protected static $_instance = null;
         /**
          * Containts Database-Object
          * @var object
@@ -165,15 +160,8 @@
          * @throws \Core\Mexception
          */
         public function __construct() {
-            $this->Database = new \Lib\Database\MySQL;
+            $this->Database = \Lib\Database\MySQL::getInstance();
             return ;
-        }
-
-        public static function getInstance() {
-            if (static::$_instance === null) {
-                static::$_instance = new static();
-            }
-            return static::$_instance;
         }
 
         public function __destruct() {
