@@ -3,7 +3,7 @@
     /**
      * [index.controller.php]
      * @version 1.0.0
-     * @revison 01
+     * @revison 02
      * @author Christian Klauenbösch
      * @copyright Klauenbösch IT Services
      * @link http://www.klit.ch
@@ -12,7 +12,7 @@
      *              1.0.0   -
      *
      */
-    class index extends \Core\Extendable\Controller implements \Core\Interfaces\controller {
+    class steady extends \Core\Extendable\Controller implements \Core\Interfaces\controller {
         /**
          * @var \Lib\Template\Template
          */

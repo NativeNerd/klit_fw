@@ -6,13 +6,13 @@ Die Nummerierung ist etwas eigenartig, aber durchaus sinnvoll.
 Grundsätzlich wird eine neue Version aus einem Klon der alten gebildet. Dabei bleiben während der Entwicklungsphase alle Versionsnummern bestehen. Allerdings wird bei jedem Commit eine Revisionsnummer (@revision) um eins (1) erhöht. Sobald die Entwicklung fertig gestellt ist, wird danach die Versionsnummer angepasst und die Revisionsnummer entfernt.
 
 Dabei gilt folgendes "Gesetz":
-1.0.0
-| | \
-| |  - Wird erhöht, falls nur kleinere Anpassungen vorgenommen wurden (Bugs etc.)
-|  \
-|   - Wird erhöht, falls der Funktionsumfang angepasst wurde, aber Abwärtskompilität gewährleistet ist.
- \
-  - Wird erhöht, falls die Klasse nicht mehr abwärts kompatibel ist.
+
+hinterste Stelle
+- Wird erhöht, falls nur kleinere Anpassungen vorgenommen wurden (Bugs etc.)
+mittlere Stelle
+- Wird erhöht, falls der Funktionsumfang angepasst wurde, aber Abwärtskompilität gewährleistet ist.
+vorderste Stelle
+- Wird erhöht, falls die Klasse nicht mehr abwärts kompatibel ist.
 
 Dasselbe gilt auch sinnbildlich für die Versionsnummern des gesamten Frameworks.
 
@@ -73,7 +73,14 @@ Dasselbe gilt auch sinnbildlich für die Versionsnummern des gesamten Frameworks
         </td>
     </tr>
     <tr>
-        <td>\Core\Controller</td>
+        <td rowspan="2">\Core\Controller</td>
+        <td>1.0.0</td>
+        <td>01</td>
+        <td>
+            solved a bug with loading steady class
+        </td>
+    </tr>
+    <tr>
         <td>1.0.0</td>
         <td>01</td>
         <td>
@@ -81,11 +88,18 @@ Dasselbe gilt auch sinnbildlich für die Versionsnummern des gesamten Frameworks
         </td>
     </tr>
     <tr>
-        <td>\Src\Steady\Steady</td>
+        <td rowspan="2">\Src\Controller\Steady</td>
         <td>1.0.0</td>
         <td>01</td>
         <td>
             added class
+        </td>
+    </tr>
+    <tr>
+        <td>1.0.0</td>
+        <td>02</td>
+        <td>
+            solved a bug with class name
         </td>
     </tr>
 </table>

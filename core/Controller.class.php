@@ -3,7 +3,7 @@
     /**
      * [Controller.class.php]
      * @version 1.0.0
-     * @revision 01
+     * @revision 02
      * @author Christian Klauenbösch
      * @copyright Klauenbösch IT Services
      * @link http://www.klit.ch
@@ -48,6 +48,7 @@
                 . \Config\Constant::FILE_CONTROLLEREXT);
             if (file_exists($path) AND file_exists($path_steady)) {
                 require_once $path;
+                require_once $path_steady;
             } else {
                 throw new \Core\Mexception('Unknown controller or steady');
             }
