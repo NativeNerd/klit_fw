@@ -1,6 +1,22 @@
 # KLIT FRAMEWORK CHANGELOG
 
-## Version 0.3
+## Wie funktioniert die Nummerierung der Versionen?
+Die Nummerierung ist etwas eigenartig, aber durchaus sinnvoll.
+
+Grundsätzlich wird eine neue Version aus einem Klon der alten gebildet. Dabei bleiben während der Entwicklungsphase alle Versionsnummern bestehen. Allerdings wird bei jedem Commit eine Revisionsnummer (@revision) um eins (1) erhöht. Sobald die Entwicklung fertig gestellt ist, wird danach die Versionsnummer angepasst und die Revisionsnummer entfernt.
+
+Dabei gilt folgendes "Gesetz":
+1.0.0
+| | \
+| |  - Wird erhöht, falls nur kleinere Anpassungen vorgenommen wurden (Bugs etc.)
+|  \
+|   - Wird erhöht, falls der Funktionsumfang angepasst wurde, aber Abwärtskompilität gewährleistet ist.
+ \
+  - Wird erhöht, falls die Klasse nicht mehr abwärts kompatibel ist.
+
+Dasselbe gilt auch sinnbildlich für die Versionsnummern des gesamten Frameworks.
+
+## Version 0.3 (parent 0.2)
 <table>
     <tr>
         <th>File</th>
