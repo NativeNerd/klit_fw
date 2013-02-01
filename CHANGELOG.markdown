@@ -1,6 +1,6 @@
 # KLIT FRAMEWORK CHANGELOG
 
-## Version 1.0
+## Version 0.3
 <table>
     <tr>
         <th>File</th>
@@ -31,6 +31,14 @@
         <td>01</td>
         <td>
             now singleton
+        </td>
+    </tr>
+    <tr>
+        <th>\Lib\Path\Path.class.php</th>
+        <td>1.0.0</td>
+        <td>01</td>
+        <td>
+            removed bootstrap
         </td>
     </tr>
 </table>
