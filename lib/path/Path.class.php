@@ -15,17 +15,13 @@
      */
     class Path implements \Core\Interfaces\Lib {
         protected static $_instance = null;
-        protected static $Bootstrap = null;
         protected $param;
 
         public function __construct() {
 
         }
 
-        public static function getInstance(\Core\Bootstrap $Bootstrap = null) {
-            if ($Bootstrap !== null) {
-                static::$Bootstrap = $Bootstrap;
-            }
+        public static function getInstance() {
             if (static::$_instance === null) {
                 static::$_instance = new static();
             }
