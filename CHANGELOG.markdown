@@ -9,7 +9,7 @@
         <th>What changed</th>
     </tr>
     <tr>
-        <th>\Lib\Query\Query.class.php</th>
+        <td rowspan="2">\Lib\Query\Query.class.php</td>
         <td>2.0.0</td>
         <td>01</td>
         <td>
@@ -18,7 +18,6 @@
         </td>
     </tr>
     <tr>
-        <th>\Lib\Query\Query.class.php</th>
         <td>2.0.0</td>
         <td>02</td>
         <td>
@@ -26,7 +25,7 @@
         </td>
     </tr>
     <tr>
-        <th>\Lib\Database\MySQL.class.php</th>
+        <td>\Lib\Database\MySQL.class.php</td>
         <td>3.0.1</td>
         <td>01</td>
         <td>
@@ -34,7 +33,7 @@
         </td>
     </tr>
     <tr>
-        <th>\Lib\Path\Path.class.php</th>
+        <td>\Lib\Path\Patd.class.php</td>
         <td>1.0.0</td>
         <td>01</td>
         <td>
