@@ -15,6 +15,9 @@
         const DEFAULT_CONTROLLER        = 'index';
         const DEFAULT_ACTION            = 'show';
 
+        const STEADY_CONTROLLER         = 'steady';
+        const STEADY_ACTION             = 'steady';
+
         const PATH       = 'src/controller/';
     }
 

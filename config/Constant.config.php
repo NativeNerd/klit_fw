@@ -28,6 +28,7 @@
         const PATH_JS               = 'media/js/';
         const PATH_MODEL            = 'model/';
         const PATH_MAP              = 'map/';
+        const PATH_CONTROLLER       = 'src/controller/';
 
         const FILE_COREEXT          = '.class.php';
         const FILE_LIBEXT           = '.class.php';
