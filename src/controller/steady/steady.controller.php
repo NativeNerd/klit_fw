@@ -3,6 +3,7 @@
     /**
      * [index.controller.php]
      * @version 1.0.0
+     * @revison 01
      * @author Christian Klauenbösch
      * @copyright Klauenbösch IT Services
      * @link http://www.klit.ch
@@ -35,7 +36,7 @@
         }
 
         public function steady($uri) {
-            
+
         }
 
         public function _fallback($uri = null) {

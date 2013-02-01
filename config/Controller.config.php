@@ -3,6 +3,7 @@
     /**
      * [Controller.config.php]
      * @version 1.0.0
+     * @revision 01
      * @author Christian Klauenbösch
      * @copyright Klauenbösch IT Services
      * @link http://www.klit.ch

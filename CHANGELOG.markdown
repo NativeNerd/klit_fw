@@ -33,11 +33,43 @@
         </td>
     </tr>
     <tr>
-        <td>\Lib\Path\Patd.class.php</td>
+        <td>\Lib\Path\Path</td>
         <td>1.0.0</td>
         <td>01</td>
         <td>
             removed bootstrap
+        </td>
+    </tr>
+    <tr>
+        <td>\Config\Constant</td>
+        <td>1.0.0</td>
+        <td>01</td>
+        <td>
+            added PATH_CONTROLLER
+        </td>
+    </tr>
+    <tr>
+        <td>\Config\Controller</td>
+        <td>1.0.0</td>
+        <td>01</td>
+        <td>
+            added steady constants
+        </td>
+    </tr>
+    <tr>
+        <td>\Core\Controller</td>
+        <td>1.0.0</td>
+        <td>01</td>
+        <td>
+            added steady methods
+        </td>
+    </tr>
+    <tr>
+        <td>\Src\Steady\Steady</td>
+        <td>1.0.0</td>
+        <td>01</td>
+        <td>
+            added class
         </td>
     </tr>
 </table>
