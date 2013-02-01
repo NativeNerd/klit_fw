@@ -2,26 +2,34 @@
 
 ## Library
 ### Priority A
-* implement .json files to declare lib, required lib & co
+* xml-Dateien um Library, benötigte Bibliotheken etc zu beschreiben
+#### Template Klasse
+* Line-by-line parsing
 
 ### Priority B
-* Extend Template class on
-** including js
-** including css
-** including meta information
-** including rss
-* Extend Path class
-** including getSize, getPath, getExtension, ...
-* Including File class
-** isWritable, write, read, ...
-* Including Request class
-** getVariable, parseVariable, ...
-* Split Permission class
-** PermissionReader, PermissionWriter, ...
+#### Template Klasse erweitern
+* including js
+* including css
+* including meta information
+* including rss
+* Extensions
+#### Extend Path class
+* including getSize, getPath, getExtension, ...
+#### Including File class
+* setChmod, ...
+* isWritable, write, read, ...
+#### Including Request class
+* get, post, req
+* getVariable, parseVariable, ...
+#### Split Permission class
+* PermissionReader, PermissionWriter, ...
+#### Cookie-Klasse
+* Cookies lesen und schreiben
+#### Collectors
+* Sammlung mehrerer Models
+#### Date-Klasse
 
 ### Priority C
-* Create a User class
-* Create a Law class
-* Class Query: IN()
+#### User-Klasse
 
 ### Priority D
