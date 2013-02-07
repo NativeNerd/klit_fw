@@ -30,7 +30,7 @@
         protected $Form;
 
         public function __construct() {
-            $this->Query = \Lib\Query\Query::getInstance();
+            $this->Query = new \Lib\Query\Query();
             $this->Template = new \Lib\Template\Template();
             $this->Permission = \Lib\Permission\Permission::getInstance();
             return ;
@@ -45,6 +45,7 @@
         }
 
         protected function _loginForm() {
+            return ;
             $this->Form = new \Lib\Form\Form();
             $this->Form->setId('login');
             $this->Form->usePost();
@@ -122,10 +123,9 @@
         }
 
         public function show($uri) {
-            $this->Query->update()->table('user')->fields('user_name')->values('Neuer Name')->where('user_id', '=', 1)->execute();
-            $this->_loginForm();
-            $this->Template->open('index/index.tpl');
-            $this->Template->show();
+            $this->Template->loadTemplate('index/index.tpl');
+            $this->Template->assign('value', true);
+            $this->Template->display();
             return ;
         }
 
@@ -135,9 +135,8 @@
         }
 
         public function _fallback($uri = null) {
-            $this->Template->open('index/fallback.tpl');
-            $this->Template->show();
-            return ;
+            $this->Template->loadTemplate('index/fallback.tpl');
+            $this->Template->display();
         }
 
         public function __desctruct() {
