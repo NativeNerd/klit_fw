@@ -102,4 +102,12 @@ Dasselbe gilt auch sinnbildlich für die Versionsnummern des gesamten Frameworks
             solved a bug with class name
         </td>
     </tr>
+    <tr>
+        <td>\Lib\Template\Template</td>
+        <td>1.0.0</td>
+        <td>01</td>
+        <td>
+            Integrated Twig
+        </td>
+    </tr>
 </table>
