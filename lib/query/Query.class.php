@@ -4,7 +4,6 @@
      * ToDo (nach Priorität geordnet):
      *
      * @todo Where-Bedingungen verschachteln
-     * @todo IN()
      * @todo Statement-Array noch intensiver strukturieren
      * @todo $allowedAfterwards kontrollieren
      * @todo Diverse Erweiterungen integrieren
@@ -316,7 +315,6 @@
 
         /**
          * Notates $value to go into database
-         * @todo Implement into class Query
          * @param mixed $value
          * @param string $type
          * @return null|string
@@ -925,6 +923,7 @@
             }
 
             // build joins
+            $join = array_merge($join, $on);
             if (is_array($join) AND is_array($using)) {
                 $join = array_combine($join, $using);
                 $tmp = '';
@@ -935,7 +934,7 @@
                 unset($tmp);
             }
             if (is_array($join) AND is_array($on)) {
-                $join = array_combine($join, $using);
+                $join = array_combine($join, $on);
                 $tmp = '';
                 foreach ($jon AS $key=> $value) {
                     $tmp .= $key . ' ' . $value;

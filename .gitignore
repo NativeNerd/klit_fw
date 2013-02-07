@@ -9,3 +9,5 @@ nbproject/
 /test.html
 /_projectRelatedFiles/
 /new_Template.php
+/lib/template/twig/doc/
+/media/tpl/.cache/

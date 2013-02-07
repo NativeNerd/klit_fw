@@ -7,112 +7,48 @@
      * @copyright Klauenbösch IT Services
      * @link http://www.klit.ch
      *
-     * @desc Handles Objects of the Application
+     * @desc
      *
      * previous     now     what changed
      *              1.0.0   -
      *
     */
     class Bootstrap {
-        protected $registered;
+        protected $options;
+        protected $result;
 
-        /**
-         * Registers an application, if application will be called, instance will be opened automatically
-         *
-         * @param string $applicationName
-         * @param string $namespace
-         */
-        public function registerApplication($applicationName, $className, $namespace) {
-            $fullClassName = $namespace.'\\'.$className;
-            if (class_exists($fullClassName, false)) {
-                $this->registered[$applicationName] = $namespace.'\\'.$className;
-                return true;
-            } else {
-                $path = \Lib\Helper\Helper::buildPath('lib/'.$applicationName.'/'.$className.'.class.php');
-                if (file_exists($path)) {
-                    require_once $path;
-                }
-                if (class_exists($fullClassName, false)) {
-                    $this->registered[$applicationName] = $namespace.'\\'.$className;
-                    return true;
-                }
+        public function __construct() {
+            $json = file_get_contents('core/bootstrap.json');
+            $this->options = json_decode($json);
+            $this->result[] = $this->checkPhpVersion();
+            $this->result[] = $this->checkNeededFiles();
+            $this->result[] = $this->checkDirectories();
+        }
+
+        public function getResult() {
+            if (in_array(false, $this->result)) {
                 return false;
             }
-        }
-
-        /**
-         * Looks wheter an application is registered
-         *
-         * @param string $applicationName
-         * @return boolean
-         */
-        public function isRegistered($applicationName) {
-            if (isset($this->registered[$applicationName])) {
-                return true;
-            }
-            return false;
-        }
-
-        /**
-         * Creates a new instance of the given application
-         *
-         * @param string $applicationName
-         * @return boolean
-         */
-        public function openInstance($applicationName) {
-            if ($this->isRegistered($applicationName)) {
-                $fullClassName = $this->registered[$applicationName];
-                $this->$applicationName = new $fullClassName($this);
-                if (is_object($this->$applicationName)) {
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
-        }
-
-        /**
-         * Opens a new application in the bootstrap
-         * @param object $applicationObject
-         * @param string $applicationName
-         * @return boolean
-         */
-        public function openApplication(&$applicationObject, $applicationName) {
-            if (is_object($applicationObject)) {
-                $this->$applicationName = $applicationObject;
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        /**
-         * Closes the application in the bootstrap
-         * @param string $applicationName
-         * @return boolean
-         */
-        public function closeApplication($applicationName) {
-            unset($this->$applicationName);
             return true;
         }
 
-        /**
-         * Gets the application object
-         * @param string $applicationName
-         * @return (object|boolean)
-         */
-        public function getApplication($applicationName) {
-            if (isset($this->$applicationName)) {
-                return $this->$applicationName;
-            }
-            if ($this->isRegistered($applicationName)) {
-                if ($this->openInstance($applicationName)) {
-                    return $this->$applicationName;
-                }
+        public function checkLive() {
+
+        }
+
+        public function checkPhpVersion() {
+            if (version_compare(PHP_VERSION, $this->options->phpversion, 'ge')) {
+                return true;
             }
             return false;
+        }
+
+        public function checkDirectories() {
+            return true;
+        }
+
+        public function checkNeededFiles() {
+            return true;
         }
     }
 ?>

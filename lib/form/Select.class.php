@@ -130,7 +130,6 @@
          * @return boolean
          */
         public function fill($method) {
-            /** @todo Possibly have more than one selected option :S */
             if ($method == 'GET') $req = $_GET;
             else $req = $_POST;
             if (isset($req[$this->name])) {

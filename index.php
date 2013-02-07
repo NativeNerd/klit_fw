@@ -4,7 +4,9 @@
 
     require_once 'config/Constant.config.php';
     require_once 'core/Autoloader.class.php';
-    spl_autoload_register(array('\Core\Autoloader', 'load'), true, true);
+    require_once 'lib/template/Twig/Autoloader.php';
+    spl_autoload_register(array('\Core\Autoloader', 'load'));
+    Twig_Autoloader::register();
 
     $Controller = new Core\Controller();
     $Controller->run();

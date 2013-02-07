@@ -32,6 +32,14 @@
                 return false;
         }
 
+        public static function isFile($file) {
+            if (file_exists($file)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
         public static function load($className) {
             self::bootstrap();
             $stack = explode('\\', $className);
@@ -58,6 +66,9 @@
                     $ext = \Config\Constant::FILE_COREEXT;
                 }
             }
+            if (!isset($ext)) {
+                $ext = '.php';
+            }
             if (strtolower($stack[0]) == 'model') {
                 $requireMap = true;
                 $ext = \Config\Constant::FILE_MODELEXT;
@@ -72,15 +83,16 @@
                 $config = max($stack);
                 $config = $stack[$config];
                 $configPath = self::buildPath(\Config\Constant::PATH_CONFIG . $config . \Config\Constant::FILE_CONFIGEXT);
-                if ($configPath) require_once $configPath;
+                if ($configPath AND self::isFile($configPath)) require_once $configPath;
             }
             if ($requireMap) {
                 $config = max($stack);
                 $config = $stack[$config];
                 $mapPath = self::buildPath(\Config\Constant::PATH_MAP . $config . \Config\Constant::FILE_MAPEXT);
-                if ($mapPath) require_once $mapPath;
+                if ($mapPath AND self::isFile($mapPath)) require_once $mapPath;
             }
-            require_once self::buildPath($file . $ext);
+            $filePath = self::buildPath($file . $ext);
+            if (self::isFile($filePath)) require_once $filePath;
             return ;
         }
     }

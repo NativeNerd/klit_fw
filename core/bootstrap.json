@@ -1,0 +1,1 @@
+{"phpversion":"5.2.0","neededfiles":{"config":["Constant","Path","Controller"],"core":["Bootstrap","Controller","Autoloader"],"lib":["Path","Helper"],"core\/interfaces":["Controller","Lib"],"core\/extendable":["Controller"]}}
