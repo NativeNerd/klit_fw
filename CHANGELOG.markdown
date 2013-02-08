@@ -24,8 +24,9 @@ Dasselbe gilt auch sinnbildlich für die Versionsnummern des gesamten Frameworks
         <th>File revision</th>
         <th>What changed</th>
     </tr>
+<!-- /Lib/Query/Query.class.php -->
     <tr>
-        <td rowspan="2">\Lib\Query\Query.class.php</td>
+        <td rowspan="2">/lib/query/Query.class.php</td>
         <td>2.0.0</td>
         <td>01</td>
         <td>
@@ -40,16 +41,18 @@ Dasselbe gilt auch sinnbildlich für die Versionsnummern des gesamten Frameworks
             not anymore a singleton
         </td>
     </tr>
+<!-- /lib/database/MySQL.class.php -->
     <tr>
-        <td>\Lib\Database\MySQL.class.php</td>
+        <td>/Lib/Database/MySQL.class.php</td>
         <td>3.0.1</td>
         <td>01</td>
         <td>
             now singleton
         </td>
     </tr>
+<!-- /Lib/Path/Path.class.php -->
     <tr>
-        <td>\Lib\Path\Path</td>
+        <td rowspan="2">/Lib/Path/Path.class.php</td>
         <td>1.0.0</td>
         <td>01</td>
         <td>
@@ -57,23 +60,33 @@ Dasselbe gilt auch sinnbildlich für die Versionsnummern des gesamten Frameworks
         </td>
     </tr>
     <tr>
-        <td>\Config\Constant</td>
+        <td>1.0.0</td>
+        <td>02</td>
+        <td>
+            added build path to exception message
+        </td>
+    </tr>
+<!-- /config/Constant.config.php -->
+    <tr>
+        <td>/Config/Constant</td>
         <td>1.0.0</td>
         <td>01</td>
         <td>
             added PATH_CONTROLLER
         </td>
     </tr>
+<!-- /config/Controller.config.php -->
     <tr>
-        <td>\Config\Controller</td>
+        <td>/config/Controller</td>
         <td>1.0.0</td>
         <td>01</td>
         <td>
             added steady constants
         </td>
     </tr>
+<!-- /core/Controller.class.php -->
     <tr>
-        <td rowspan="2">\Core\Controller</td>
+        <td rowspan="2">/core/Controller</td>
         <td>1.0.0</td>
         <td>01</td>
         <td>
@@ -87,8 +100,9 @@ Dasselbe gilt auch sinnbildlich für die Versionsnummern des gesamten Frameworks
             added steady methods
         </td>
     </tr>
+<!-- /src/controller/steady/steady.controller.php -->
     <tr>
-        <td rowspan="2">\Src\Controller\Steady</td>
+        <td rowspan="2">/src/controller/Steady.controller.php</td>
         <td>1.0.0</td>
         <td>01</td>
         <td>
@@ -102,12 +116,20 @@ Dasselbe gilt auch sinnbildlich für die Versionsnummern des gesamten Frameworks
             solved a bug with class name
         </td>
     </tr>
+<!-- /lib/template/Template.class.php -->
     <tr>
-        <td>\Lib\Template\Template</td>
+        <td rowspan="2">/lib/template/template.class.php</td>
+        <td>1.0.0</td>
+        <td>00</td>
+        <td>
+            Integrated Twig
+        </td>
+    </tr>
+    <tr>
         <td>1.0.0</td>
         <td>01</td>
         <td>
-            Integrated Twig
+            added ability to auto-load functions
         </td>
     </tr>
 </table>

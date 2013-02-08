@@ -74,7 +74,11 @@
                 $ext = \Config\Constant::FILE_MODELEXT;
             }
             if (strtolower($stack[0]) == 'lib') {
-                $ext = \Config\Constant::FILE_LIBEXT;
+                if (strtolower($stack[2]) == 'extensions') {
+                    $ext = \Config\Constant::FILE_EXTENSIONEXT;
+                } else {
+                    $ext = \Config\Constant::FILE_LIBEXT;
+                }
             }
             if (strtolower($stack[0]) == 'config') {
                 $ext = \Config\Constant::FILE_CONFIGEXT;

@@ -39,5 +39,6 @@
         const FILE_CONTROLLEREXT    = '.controller.php';
         const FILE_IMPLEMENTEXT     = '.interface.php';
         const FILE_ABSTRACTEXT      = '.abstract.php';
+        const FILE_EXTENSIONEXT     = '.extension.php';
     }
 ?>

@@ -3,7 +3,7 @@
     /**
      * [Path.class.php]
      * @version 1.0.0
-     * @revision 01
+     * @revision 02
      * @author Christian Klauenbösch
      * @copyright Klauenbösch IT Services
      * @link http://www.klit.ch
@@ -113,7 +113,7 @@
             elseif (is_file($wholePath))
                 return $wholePath;
             elseif ($throwError)
-                throw new \Core\Mexception('Invalid path given, given ' . $pathOrFile);
+                throw new \Core\Mexception('Invalid path given<br/> given ' . $pathOrFile . '<br />build ' . $wholePath);
             else
                 return $wholePath;
         }
