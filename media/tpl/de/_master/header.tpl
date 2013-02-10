@@ -15,7 +15,7 @@
 	
 				$.ajax({
 					type: "POST",
-					url: "",
+					url: "index.php/login/check",
 					data: s
 				}).done(function( msg ) {
 					var myData = jQuery.parseJSON( msg );

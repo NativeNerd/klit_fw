@@ -30,6 +30,10 @@
             return ;
         }
 
+        public function isUser( $name, $pw ){
+
+        }
+        
         public function __desctruct() {
 
         }
