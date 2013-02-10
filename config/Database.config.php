@@ -14,8 +14,8 @@
     class Database {
         const HOST          = '127.0.0.1';
         const USER          = 'root';
-        const PASS          = 'root';
-        const DATABASE      = 'test';
+        const PASS          = '';
+        const DATABASE      = 'fw';
         const CHARSET       = 'utf8';
     }
 
